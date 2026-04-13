@@ -46,7 +46,7 @@ Keep only actionable emails — real senders, meaningful subjects. Skip newslett
 
 ### 3. Compose the briefing
 
-See `references/briefing-format.md` for the exact layout and voice spec. Include the 💪 Body section using the Garmin health file data.
+See `references/briefing-format.md` for the exact layout, voice spec, and how to weave the Garmin health insight into the summary line. There is no separate Body section — the health recommendation belongs in the opening summary.
 
 ### 4. Return
 

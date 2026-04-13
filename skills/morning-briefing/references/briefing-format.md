@@ -3,15 +3,7 @@
 ## Layout
 
 ```
-☀️ [Summary line — see voice spec below]
-
----
-
-💪 **Body**
-
-Slept [duration] ([quality]) — [deep/REM highlights if notable]
-HRV: [value] ms | Resting HR: [value] bpm
-Training Readiness: [score] ([level])
+☀️ [Summary line — see voice spec below. Garmin insight woven in here, not as a separate section.]
 
 ---
 
@@ -38,18 +30,55 @@ Training Readiness: [score] ([level])
 
 - Dividers (`---`) between each section
 - No trailing divider after the last section
-- Include **💪 Body** section whenever Garmin data is available (it usually will be)
-- Omit **💪 Body** only if the health file is missing or empty
+- No separate Body section — Garmin insight is woven into the summary line
 - Omit **📧 Email Highlights** section if nothing actionable (or write "Nothing actionable.")
 - Omit **✅ Today's Tasks** section if no tasks tool is available
 - All-day events and holidays: skip unless genuinely relevant
 
-### Body section voice
+---
 
-- Keep it factual and brief — one to three lines
-- Training Readiness level affects tone of the summary line subtly (don't preach, just note it)
-- Never say "you should rest" — surface the data, let Amit decide
-- Example: `Slept 7h 20m (Fair) — HRV 95 ms, resting HR 42 bpm. Training Readiness: 68 (Moderate).`
+## Garmin Health Insight (woven into summary)
+
+Read today's health file from `~/.openclaw/workspace/skills/garmin-connect/health/YYYY-MM-DD.md` and weave a one-sentence insight into the summary line. Do NOT list raw numbers — analyze and give a contextual recommendation based on what Amit has that day.
+
+### Amit's baselines (30-day averages)
+
+- **HRV:** avg 94 ms (normal range: 88–99 ms). Below 88 = flagged low.
+- **Resting HR:** avg 42 bpm (normal range: 38–47 bpm). Above 47 = flagged high.
+- **Sleep:** avg 8h 7m. Under 6h = poor. 6–7h = below average. 7h+ = fine.
+- **Training Readiness:** 0–100. Below 50 = low. 50–70 = moderate. 70+ = good.
+
+### How to interpret
+
+Primary signals (weight these most):
+1. Sleep duration + quality
+2. HRV vs baseline
+3. Resting HR vs baseline
+
+Secondary signal: Training Readiness score.
+
+### How to phrase the recommendation
+
+- Reference what's actually on the calendar that day (gym, Five Fingers practice, run, etc.)
+- Be specific to the activity, not generic
+- One sentence, understated — surface it, don't lecture
+- Never say "you should" — say "might be worth" or "could be a good day to"
+
+### Examples
+
+**Good readiness, Five Fingers day:**
+> "Good morning, Amit. Clear and mild out — you're well rested heading into practice tonight."
+
+**Poor sleep, gym day:**
+> "Good morning, Amit. Overcast with a light wind — sleep was rough last night, might be worth dialing back the intensity at the gym."
+
+**Low HRV, busy school day + practice:**
+> "Good morning, Amit. Warm and sunny — HRV is a bit down from your usual, so going easy at practice tonight wouldn't be the worst idea."
+
+**Everything fine, no training:**
+> "Good morning, Amit. Warm and clear — you're well recovered, and it's a light day."
+
+**If no Garmin data available:** skip the health insight entirely, go straight to day shape.
 
 ---
 
