@@ -3,8 +3,7 @@
 ## Layout
 
 ```
-☀️ [Summary line — weather + day shape + Garmin-based recommendation, all in one. No raw numbers.]
-💤 Sleep score [X] — [Xh Xm] deep, [Xh Xm] REM, [Xh Xm] light
+☀️ [Summary line — weather + day shape + Garmin-based recommendation, all in one. No raw numbers or stats.]
 
 ---
 
@@ -44,18 +43,18 @@ Read today's health file from `~/.openclaw/workspace/skills/garmin-connect/healt
 
 ### What's in the health file
 
-- **Sleep:** duration, quality label (e.g. Good/Fair/Poor), deep/light/REM/awake breakdown, sleep score (0–100)
+- **Sleep:** duration, quality label (Good/Fair/Poor), deep/light/REM/awake breakdown, sleep score (0–100)
 - **Resting HR + HRV**
-- **Training Readiness:** Garmin's own score (0–100) + label (e.g. "Moderate — Good Sleep History") — use this as Garmin's built-in baseline assessment
+- **Training Readiness:** Garmin's own score + label (e.g. "Moderate — Good Sleep History") — use this as the baseline
 - **SpO2, respiration, stress**
 
 ### How to interpret
 
-Use Garmin's own labels and scores as the baseline — don't invent thresholds.
+Use Garmin's own labels and scores as the baseline — don't invent thresholds. Never output raw numbers in the summary.
 
 Primary signals (weight these most):
-1. Sleep quality label + score + deep/REM breakdown
-2. HRV (Garmin flags deviations from personal baseline in the readiness label)
+1. Sleep: use the score + deep/REM breakdown to assess quality. Low deep or REM sleep = poor recovery even if total duration looks fine.
+2. HRV (Garmin flags personal deviations in the readiness label)
 3. Resting HR
 
 Secondary signal: Training Readiness score + Garmin's label.
