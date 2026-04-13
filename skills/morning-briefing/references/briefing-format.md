@@ -7,6 +7,14 @@
 
 ---
 
+💪 **Body**
+
+Slept [duration] ([quality]) — [deep/REM highlights if notable]
+HRV: [value] ms | Resting HR: [value] bpm
+Training Readiness: [score] ([level])
+
+---
+
 📅 **Today's Schedule**
 
 [HH:MM AM/PM – HH:MM AM/PM — Event name]
@@ -30,10 +38,18 @@
 
 - Dividers (`---`) between each section
 - No trailing divider after the last section
-- Omit **💪 Body** section unless readiness/HRV data is available (it usually isn't)
+- Include **💪 Body** section whenever Garmin data is available (it usually will be)
+- Omit **💪 Body** only if the health file is missing or empty
 - Omit **📧 Email Highlights** section if nothing actionable (or write "Nothing actionable.")
 - Omit **✅ Today's Tasks** section if no tasks tool is available
 - All-day events and holidays: skip unless genuinely relevant
+
+### Body section voice
+
+- Keep it factual and brief — one to three lines
+- Training Readiness level affects tone of the summary line subtly (don't preach, just note it)
+- Never say "you should rest" — surface the data, let Amit decide
+- Example: `Slept 7h 20m (Fair) — HRV 95 ms, resting HR 42 bpm. Training Readiness: 68 (Moderate).`
 
 ---
 

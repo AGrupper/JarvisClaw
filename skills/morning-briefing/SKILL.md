@@ -5,13 +5,13 @@ description: "Fetch and deliver Amit's daily briefing: weather (Tel Aviv), Googl
 
 # Morning Briefing
 
-Fetch calendar, weather, and email, then compose and return the briefing in one shot. No intermediate status messages.
+Fetch calendar, weather, email, and Garmin health data, then compose and return the briefing in one shot. No intermediate status messages.
 
 ## Steps
 
 ### 1. Fetch in parallel
 
-Run all three fetches simultaneously:
+Run all four fetches simultaneously:
 
 **Weather** (Tel Aviv):
 ```bash
@@ -34,13 +34,19 @@ Then fetch metadata for each message ID:
 gws gmail users messages get --params '{"userId": "me", "id": "<ID>", "format": "metadata", "metadataHeaders": ["From","Subject","Date"]}' --format json
 ```
 
+**Garmin health data** (today):
+```bash
+uv run ~/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py
+```
+This writes to `~/.openclaw/workspace/skills/garmin-connect/health/YYYY-MM-DD.md`. Read that file after the sync completes.
+
 ### 2. Filter email
 
 Keep only actionable emails — real senders, meaningful subjects. Skip newsletters, promos, and marketing blasts. If nothing actionable, omit the section or note "Nothing actionable."
 
 ### 3. Compose the briefing
 
-See `references/briefing-format.md` for the exact layout and voice spec.
+See `references/briefing-format.md` for the exact layout and voice spec. Include the 💪 Body section using the Garmin health file data.
 
 ### 4. Return
 
