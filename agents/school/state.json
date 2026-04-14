@@ -1,8 +1,113 @@
 {
-  "lastFetch": null,
-  "seenMessageIds": [],
-  "seenNotificationIds": [],
-  "seenChangeIds": [],
+  "lastFetch": "2026-04-14T18:52:48.786Z",
+  "seenMessageIds": [
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHGO4MyhHGcHKVX7sVCN0TdG/uAqq3cAfMglpVbN3GQSk=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH/IWsbd/bylbk2kV5b+mTYIM64u1Iu1nQey64cT2Fpiw=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH+h32XJRxHV+S/kTq8NB5cn7SonZXeTckNP0F8eysp08=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH+h32XJRxHV+S/kTq8NB5cgykEfco6BtqeDUA+mGO4NU=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH+h32XJRxHV+S/kTq8NB5cleeLBPETKJjflYjaxAM0w4="
+  ],
+  "seenNotificationIds": [
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTYkeDHpadXxyHtNutyVpW3w=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTQkIukGp/rtTRxhtegP8iCo=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTbrC08dx3a9PZSbhCorYpD0=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTVp622LCgIw26yBk3RSMejU=",
+    "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHotNvvQsCu1WIQsEyZdJWe91psp+NuZygHwCc+c6xjYE="
+  ],
+  "seenChangeIds": [
+    "chg_19c7812240df"
+  ],
   "seenClassroomIds": [],
-  "pendingAlerts": []
+  "pendingAlerts": [
+    {
+      "id": "chg_19c7812240df",
+      "source": "webtop",
+      "type": "change",
+      "summary": "שינוי מערכת זוהה ב-webtop — בדוק שינויים בלוח השעות היום",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false,
+      "urgent": true
+    },
+    {
+      "id": "urgent-absence-2026-04-14",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "נרשם חיסור לעמית במדעי המחשב ב-14/04/2026 שיעור 0 (07:45–08:25)",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false,
+      "urgent": true
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHGO4MyhHGcHKVX7sVCN0TdG/uAqq3cAfMglpVbN3GQSk=",
+      "source": "webtop",
+      "type": "message",
+      "summary": "אייפד עם כיסוי אחורי שחור מוקשח הגיע — ניתן לאסוף מחדר 1.03",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH/IWsbd/bylbk2kV5b+mTYIM64u1Iu1nQey64cT2Fpiw=",
+      "source": "webtop",
+      "type": "message",
+      "summary": "מיקום בחינות מועד ב' שכבה י\"ב — 25.2",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH+h32XJRxHV+S/kTq8NB5cn7SonZXeTckNP0F8eysp08=",
+      "source": "webtop",
+      "type": "message",
+      "summary": "אבד כיסוי איירפודס בצבע לבן",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH+h32XJRxHV+S/kTq8NB5cgykEfco6BtqeDUA+mGO4NU=",
+      "source": "webtop",
+      "type": "message",
+      "summary": "נמצא אייפד עם כיסוי ורוד — ניתן לקבלו בחדר 1.03",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH+h32XJRxHV+S/kTq8NB5cleeLBPETKJjflYjaxAM0w4=",
+      "source": "webtop",
+      "type": "message",
+      "summary": "יש להחזיר את הספר \"אנטיגונה\" לספריה",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTYkeDHpadXxyHtNutyVpW3w=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "שיעורי-בית עודכנו: \"דף עבודה ב classroom\" — מדעי המחשב 14/04/2026 שיעור 1",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTQkIukGp/rtTRxhtegP8iCo=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "שיעורי-בית עודכנו: \"דף עבודה ב classroom\" — מדעי המחשב 14/04/2026 שיעור 2",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTVp622LCgIw26yBk3RSMejU=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "שיעורי-בית עודכנו: \"דף עבודה ב classroom\" — מדעי המחשב 14/04/2026 שיעור 0",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    },
+    {
+      "id": "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHotNvvQsCu1WIQsEyZdJWe91psp+NuZygHwCc+c6xjYE=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "שיעורי-בית עודכנו: \"דף ע. 3 תרגילים ב-classroom\" — מדעי המחשב 12/04/2026 שיעור 2",
+      "addedAt": "2026-04-14T18:52:48.786Z",
+      "delivered": false
+    }
+  ]
 }
