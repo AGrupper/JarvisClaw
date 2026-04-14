@@ -27,12 +27,14 @@ function log(...args) {
 
 /** Returns items whose id is not in seenIds */
 function filterNew(items, seenIds) {
-  return items.filter(item => !seenIds.includes(item.id));
+  const seen = new Set(seenIds.map(String));
+  return items.filter(item => !seen.has(String(item.id)));
 }
 
 /** Synthesize a stable ID for a Webtop today-change (API has no native ID) */
 function changeId(raw) {
-  return 'chg_' + crypto.createHash('md5').update(JSON.stringify(raw)).digest('hex').slice(0, 12);
+  const stable = JSON.stringify(raw, Object.keys(raw).sort());
+  return 'chg_' + crypto.createHash('md5').update(stable).digest('hex').slice(0, 12);
 }
 
 module.exports = { filterNew, changeId };

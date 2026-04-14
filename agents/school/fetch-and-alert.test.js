@@ -18,3 +18,24 @@ describe('filterNew', () => {
     assert.deepEqual(filterNew(items, ['x']), []);
   });
 });
+
+describe('changeId', () => {
+  it('returns a chg_ prefixed string', () => {
+    const { changeId } = require('./fetch-and-alert');
+    const raw = { title: 'Gym cancelled', date: '2026-04-14' };
+    assert.ok(changeId(raw).startsWith('chg_'));
+  });
+
+  it('is stable (same input = same output)', () => {
+    const { changeId } = require('./fetch-and-alert');
+    const raw = { title: 'Gym cancelled', date: '2026-04-14' };
+    assert.equal(changeId(raw), changeId(raw));
+  });
+
+  it('is key-order independent', () => {
+    const { changeId } = require('./fetch-and-alert');
+    const a = { title: 'Gym cancelled', date: '2026-04-14' };
+    const b = { date: '2026-04-14', title: 'Gym cancelled' };
+    assert.equal(changeId(a), changeId(b));
+  });
+});
