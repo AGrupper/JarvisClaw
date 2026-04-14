@@ -54,7 +54,7 @@ function buildMessageItem(raw, fetchedAt) {
 /** Build a structured item from a Webtop notification */
 function buildNotificationItem(raw, fetchedAt) {
   return {
-    id: String(raw.itemId || raw.id),
+    id: raw.itemId ? String(raw.itemId) : (raw.id ? String(raw.id) : changeId(raw)),
     source: 'webtop',
     type: 'notification',
     title: raw.title || raw.message?.slice(0, 80) || '',
@@ -130,7 +130,10 @@ async function main() {
 
   // Load state for deduplication
   const state = JSON.parse(fs.readFileSync(STATE_PATH, 'utf8'));
-  const { seenMessageIds, seenNotificationIds, seenChangeIds, seenClassroomIds } = state;
+  const seenMessageIds = Array.isArray(state.seenMessageIds) ? state.seenMessageIds : [];
+  const seenNotificationIds = Array.isArray(state.seenNotificationIds) ? state.seenNotificationIds : [];
+  const seenChangeIds = Array.isArray(state.seenChangeIds) ? state.seenChangeIds : [];
+  const seenClassroomIds = Array.isArray(state.seenClassroomIds) ? state.seenClassroomIds : [];
 
   const fetchedAt = new Date().toISOString();
 
@@ -149,7 +152,7 @@ async function main() {
       webtop.getUnreadMessages(50),
       webtop.getUnreadNotifications(),
       webtop.getChangesAndMessagesToday(),
-      fetchAllClassroomData()
+      fetchAllClassroomData().catch(() => null)
     ]);
   } catch (err) {
     console.log(JSON.stringify({ ok: false, error: 'fetch_failed', detail: err.message }));
@@ -158,7 +161,7 @@ async function main() {
 
   // Normalize raw responses
   const rawMessages = Array.isArray(messages) ? messages : [];
-  const rawNotifs = (notifs?.personalNotifications || []);
+  const rawNotifs = Array.isArray(notifs?.personalNotifications) ? notifs.personalNotifications : [];
   const rawChanges = Array.isArray(changes) ? changes : (changes ? [changes] : []);
   const rawAssignments = classroom?.upcoming || [];
   const rawAnnouncements = classroom?.announcements || [];
