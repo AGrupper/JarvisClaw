@@ -1,6 +1,6 @@
 # School Alerts System — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Build a background fetch-and-alert pipeline that monitors Webtop SmartSchool and Google Classroom every 20 minutes and routes new items to Jarvis as URGENT system events or NON_URGENT pendingAlerts.
 
@@ -28,7 +28,7 @@
 - Create: `agents/school/fetch-and-alert.js`
 - Create: `agents/school/fetch-and-alert.test.js`
 
-- [ ] **Step 1: Write the failing test for filterNew**
+- [x] **Step 1: Write the failing test for filterNew**
 
 Create `agents/school/fetch-and-alert.test.js`:
 
@@ -60,7 +60,7 @@ describe('filterNew', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace/agents/school
@@ -69,7 +69,7 @@ node --test fetch-and-alert.test.js
 
 Expected: fails with `Error: not implemented`
 
-- [ ] **Step 3: Create fetch-and-alert.js with filterNew exported**
+- [x] **Step 3: Create fetch-and-alert.js with filterNew exported**
 
 Create `agents/school/fetch-and-alert.js`:
 
@@ -119,7 +119,7 @@ if (require.main === module) {
 }
 ```
 
-- [ ] **Step 4: Update test to import from the module**
+- [x] **Step 4: Update test to import from the module**
 
 Replace the inline `filterNew` definition in the test:
 
@@ -146,7 +146,7 @@ describe('filterNew', () => {
 });
 ```
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace/agents/school
@@ -165,7 +165,7 @@ Expected:
 ℹ fail 0
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace
@@ -183,7 +183,7 @@ git commit -m "feat(school): scaffold fetch-and-alert with filterNew + tests"
 
 These pure builder functions map raw API responses to the structured item schema. Testing them ensures the JSON emitted to the agent is always well-formed.
 
-- [ ] **Step 1: Write failing tests for item builders**
+- [x] **Step 1: Write failing tests for item builders**
 
 In `agents/school/fetch-and-alert.test.js`, replace the existing `require` line at the top with the expanded version (adds the builder names), then append the new `describe` blocks below the existing ones:
 
@@ -247,7 +247,7 @@ describe('buildAssignmentItem', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace/agents/school
@@ -256,7 +256,7 @@ node --test fetch-and-alert.test.js
 
 Expected: fails with `buildMessageItem is not a function`
 
-- [ ] **Step 3: Add builder functions to fetch-and-alert.js**
+- [x] **Step 3: Add builder functions to fetch-and-alert.js**
 
 Add these functions before the `module.exports` line:
 
@@ -346,7 +346,7 @@ Update `module.exports`:
 module.exports = { filterNew, changeId, buildMessageItem, buildNotificationItem, buildChangeItem, buildAssignmentItem, buildAnnouncementItem };
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace/agents/school
@@ -355,7 +355,7 @@ node --test fetch-and-alert.test.js
 
 Expected: all tests pass (5 passing)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace
@@ -372,7 +372,7 @@ git commit -m "feat(school): add item builder helpers with tests"
 
 This task wires up the actual fetching. Manual verification only (network calls can't be unit-tested without mocks).
 
-- [ ] **Step 1: Replace the stub entry point in fetch-and-alert.js**
+- [x] **Step 1: Replace the stub entry point in fetch-and-alert.js**
 
 Replace the `if (require.main === module)` block with:
 
@@ -460,7 +460,7 @@ async function main() {
 }
 ```
 
-- [ ] **Step 2: Run the script with --verbose to verify output**
+- [x] **Step 2: Run the script with --verbose to verify output**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace/agents/school
@@ -473,7 +473,7 @@ Expected stderr: lines like `[webtop] messages: fetched N, new N`
 If Webtop cookies are expired you'll see: `{ "ok": false, "error": "webtop_auth_expired" }`
 If classroom CLI is unavailable you'll see items array with only Webtop data (no error — classroom failures throw and are caught).
 
-- [ ] **Step 3: Run existing tests to confirm nothing broke**
+- [x] **Step 3: Run existing tests to confirm nothing broke**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace/agents/school
@@ -482,7 +482,7 @@ node --test fetch-and-alert.test.js
 
 Expected: all pass
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace
@@ -497,7 +497,7 @@ git commit -m "feat(school): implement main fetch/dedup/emit pipeline"
 **Files:**
 - Create: `skills/school-subagent/SKILL.md`
 
-- [ ] **Step 1: Create the skill directory and file**
+- [x] **Step 1: Create the skill directory and file**
 
 ```bash
 mkdir -p /Users/amitgrupper/.openclaw/workspace/skills/school-subagent
@@ -555,7 +555,7 @@ Read stdout (JSON). Use the items array to answer. Do not fire system events fro
 **Tone:** Jarvis voice — precise, no filler. One line per item unless detail is needed.
 ```
 
-- [ ] **Step 2: Verify the file exists and is readable**
+- [x] **Step 2: Verify the file exists and is readable**
 
 ```bash
 cat /Users/amitgrupper/.openclaw/workspace/skills/school-subagent/SKILL.md
@@ -563,7 +563,7 @@ cat /Users/amitgrupper/.openclaw/workspace/skills/school-subagent/SKILL.md
 
 Expected: full skill content prints cleanly
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace
@@ -578,13 +578,13 @@ git commit -m "feat(school): add school-subagent skill"
 **Files:**
 - Modify: `HEARTBEAT.md`
 
-- [ ] **Step 1: Read current HEARTBEAT.md**
+- [x] **Step 1: Read current HEARTBEAT.md**
 
 ```bash
 cat /Users/amitgrupper/.openclaw/workspace/HEARTBEAT.md
 ```
 
-- [ ] **Step 2: Append school alerts section**
+- [x] **Step 2: Append school alerts section**
 
 Add to the end of `HEARTBEAT.md`:
 
@@ -600,7 +600,7 @@ Example output line:
 > **School:** New announcement in Math — office hours moved to Thursday
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /Users/amitgrupper/.openclaw/workspace
@@ -617,7 +617,7 @@ git commit -m "feat(school): add pending alerts check to HEARTBEAT.md"
 
 The cron message is the full agent prompt. It must be self-contained — the isolated agent has no other context.
 
-- [ ] **Step 1: Write the cron message to a temp file, then register**
+- [x] **Step 1: Write the cron message to a temp file, then register**
 
 Shell quoting a multi-line prompt inline is error-prone. Write the message to a file first:
 
@@ -670,7 +670,7 @@ openclaw cron add \
   --message "$(cat /tmp/school-cron-msg.txt)"
 ```
 
-- [ ] **Step 2: Verify the cron was registered**
+- [x] **Step 2: Verify the cron was registered**
 
 ```bash
 openclaw cron list
@@ -678,7 +678,7 @@ openclaw cron list
 
 Expected: `school-fetch` appears in the list with `every: 20m`, `session: isolated`
 
-- [ ] **Step 3: Do a dry-run to verify the script works end-to-end**
+- [x] **Step 3: Do a dry-run to verify the script works end-to-end**
 
 ```bash
 openclaw cron run school-fetch
@@ -694,7 +694,7 @@ Watch the output. If items are found, verify:
 cat /Users/amitgrupper/.openclaw/workspace/agents/school/state.json | jq .
 ```
 
-- [ ] **Step 4: Commit the cron message as documentation**
+- [x] **Step 4: Commit the cron message as documentation**
 
 Document the cron payload in case it needs to be re-registered after a reset:
 
@@ -732,11 +732,11 @@ git commit -m "docs(school): document cron job registration in webtop skill"
 
 After implementation, verify:
 
-- [ ] `node fetch-and-alert.js --verbose | jq .` produces valid JSON with `ok`, `meta`, `items[]`
-- [ ] Each item has `id`, `source`, `type`, `title`, `text`, `daysUntilDue`, `submitted`, `fetchedAt`
-- [ ] Submitted assignments are absent from output
-- [ ] Running twice without new data produces `items: []` (dedup working)
-- [ ] `openclaw cron run school-fetch` updates `state.json` correctly
-- [ ] `state.json` → `pendingAlerts` entries have `delivered: false`
-- [ ] Heartbeat surfaces `pendingAlerts` and flips `delivered: true`
-- [ ] All unit tests pass: `node --test fetch-and-alert.test.js`
+- [x] `node fetch-and-alert.js --verbose | jq .` produces valid JSON with `ok`, `meta`, `items[]`
+- [x] Each item has `id`, `source`, `type`, `title`, `text`, `daysUntilDue`, `submitted`, `fetchedAt`
+- [x] Submitted assignments are absent from output
+- [x] Running twice without new data produces `items: []` (dedup working)
+- [x] `openclaw cron run school-fetch` updates `state.json` correctly
+- [x] `state.json` → `pendingAlerts` entries have `delivered: false`
+- [x] Heartbeat surfaces `pendingAlerts` and flips `delivered: true`
+- [x] All unit tests pass: `node --test fetch-and-alert.test.js`
