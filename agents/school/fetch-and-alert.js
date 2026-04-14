@@ -37,7 +37,85 @@ function changeId(raw) {
   return 'chg_' + crypto.createHash('md5').update(stable).digest('hex').slice(0, 12);
 }
 
-module.exports = { filterNew, changeId };
+/** Build a structured item from a Webtop unread message */
+function buildMessageItem(raw, fetchedAt) {
+  return {
+    id: String(raw.messageId || raw.id),
+    source: 'webtop',
+    type: 'message',
+    title: raw.subject || '',
+    text: raw.body || raw.subject || '',
+    daysUntilDue: null,
+    submitted: false,
+    fetchedAt
+  };
+}
+
+/** Build a structured item from a Webtop notification */
+function buildNotificationItem(raw, fetchedAt) {
+  return {
+    id: String(raw.id || raw.notificationId),
+    source: 'webtop',
+    type: 'notification',
+    title: raw.title || raw.message?.slice(0, 80) || '',
+    text: raw.message || '',
+    daysUntilDue: null,
+    submitted: false,
+    fetchedAt
+  };
+}
+
+/** Build a structured item from a Webtop today-change (synthesized ID) */
+function buildChangeItem(raw, fetchedAt) {
+  return {
+    id: changeId(raw),
+    source: 'webtop',
+    type: 'change',
+    title: raw.title || raw.description?.slice(0, 80) || 'Schedule change',
+    text: JSON.stringify(raw),
+    daysUntilDue: null,
+    submitted: false,
+    fetchedAt
+  };
+}
+
+/**
+ * Build a structured item from a Classroom assignment.
+ * Returns null if the assignment is submitted (caller should filter nulls).
+ */
+function buildAssignmentItem(raw, fetchedAt) {
+  if (raw.submitted) return null;
+  const due = raw.dueDate ? new Date(raw.dueDate) : null;
+  const daysUntilDue = due
+    ? Math.ceil((due - Date.now()) / (1000 * 60 * 60 * 24))
+    : null;
+  return {
+    id: String(raw.id),
+    source: 'classroom',
+    type: 'assignment',
+    title: `${raw.courseName}: ${raw.title}`,
+    text: raw.title || '',
+    daysUntilDue,
+    submitted: false,
+    fetchedAt
+  };
+}
+
+/** Build a structured item from a Classroom announcement */
+function buildAnnouncementItem(raw, fetchedAt) {
+  return {
+    id: String(raw.id),
+    source: 'classroom',
+    type: 'announcement',
+    title: `${raw.courseName}: announcement`,
+    text: raw.text || '',
+    daysUntilDue: null,
+    submitted: false,
+    fetchedAt
+  };
+}
+
+module.exports = { filterNew, changeId, buildMessageItem, buildNotificationItem, buildChangeItem, buildAssignmentItem, buildAnnouncementItem };
 
 if (require.main === module) {
   // Entry point — implemented in later tasks

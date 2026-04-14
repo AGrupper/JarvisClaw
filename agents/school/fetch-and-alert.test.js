@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { filterNew } = require('./fetch-and-alert');
+const { filterNew, changeId, buildMessageItem, buildNotificationItem, buildChangeItem, buildAssignmentItem, buildAnnouncementItem } = require('./fetch-and-alert');
 
 describe('filterNew', () => {
   it('returns all items when seenIds is empty', () => {
@@ -37,5 +37,59 @@ describe('changeId', () => {
     const a = { title: 'Gym cancelled', date: '2026-04-14' };
     const b = { date: '2026-04-14', title: 'Gym cancelled' };
     assert.equal(changeId(a), changeId(b));
+  });
+});
+
+const NOW = '2026-04-14T08:00:00.000Z';
+
+describe('buildMessageItem', () => {
+  it('maps Webtop message to structured item', () => {
+    const raw = {
+      messageId: 'msg1',
+      subject: 'Test subject',
+      student_F_name: 'Amit',
+      student_L_name: 'G',
+      sendingDate: '2026-04-14'
+    };
+    const item = buildMessageItem(raw, NOW);
+    assert.equal(item.id, 'msg1');
+    assert.equal(item.source, 'webtop');
+    assert.equal(item.type, 'message');
+    assert.equal(item.title, 'Test subject');
+    assert.equal(item.daysUntilDue, null);
+    assert.equal(item.submitted, false);
+    assert.equal(item.fetchedAt, NOW);
+  });
+});
+
+describe('buildAssignmentItem', () => {
+  it('maps Classroom assignment to structured item', () => {
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const raw = {
+      id: 'cw1',
+      courseName: 'Math',
+      title: 'Homework 1',
+      dueDate: tomorrow.toISOString(),
+      submitted: false
+    };
+    const item = buildAssignmentItem(raw, NOW);
+    assert.equal(item.id, 'cw1');
+    assert.equal(item.source, 'classroom');
+    assert.equal(item.type, 'assignment');
+    assert.equal(item.submitted, false);
+    assert.ok(item.daysUntilDue <= 1);
+  });
+
+  it('returns null for submitted assignments', () => {
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const raw = {
+      id: 'cw2',
+      courseName: 'Math',
+      title: 'Done',
+      dueDate: tomorrow.toISOString(),
+      submitted: true
+    };
+    const item = buildAssignmentItem(raw, NOW);
+    assert.equal(item, null);
   });
 });
