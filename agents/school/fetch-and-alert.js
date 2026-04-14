@@ -118,6 +118,84 @@ function buildAnnouncementItem(raw, fetchedAt) {
 module.exports = { filterNew, changeId, buildMessageItem, buildNotificationItem, buildChangeItem, buildAssignmentItem, buildAnnouncementItem };
 
 if (require.main === module) {
-  // Entry point — implemented in later tasks
-  console.log(JSON.stringify({ ok: false, error: 'not_implemented' }));
+  main().catch(err => {
+    console.log(JSON.stringify({ ok: false, error: 'fetch_failed', detail: err.message }));
+    process.exit(0);
+  });
+}
+
+async function main() {
+  const webtop = require('./webtop-client');
+  const { fetchAllClassroomData } = require('./gws-classroom');
+
+  // Load state for deduplication
+  const state = JSON.parse(fs.readFileSync(STATE_PATH, 'utf8'));
+  const { seenMessageIds, seenNotificationIds, seenChangeIds, seenClassroomIds } = state;
+
+  const fetchedAt = new Date().toISOString();
+
+  // Auth check first: getMenuCounters returns null when session is expired
+  // (getUnreadMessages returns [] not null on failure, so counters is the reliable signal)
+  const counters = await webtop.getMenuCounters().catch(() => null);
+  if (counters === null) {
+    console.log(JSON.stringify({ ok: false, error: 'webtop_auth_expired' }));
+    return;
+  }
+
+  // Fetch all sources in parallel
+  let messages, notifs, changes, classroom;
+  try {
+    [messages, notifs, changes, classroom] = await Promise.all([
+      webtop.getUnreadMessages(50),
+      webtop.getUnreadNotifications(),
+      webtop.getChangesAndMessagesToday(),
+      fetchAllClassroomData()
+    ]);
+  } catch (err) {
+    console.log(JSON.stringify({ ok: false, error: 'fetch_failed', detail: err.message }));
+    return;
+  }
+
+  // Normalize raw responses
+  const rawMessages = Array.isArray(messages) ? messages : [];
+  const rawNotifs = (notifs?.personalNotifications || []);
+  const rawChanges = Array.isArray(changes) ? changes : (changes ? [changes] : []);
+  const rawAssignments = classroom?.upcoming || [];
+  const rawAnnouncements = classroom?.announcements || [];
+
+  // Build structured items
+  const messageItems = filterNew(
+    rawMessages.map(m => buildMessageItem(m, fetchedAt)),
+    seenMessageIds
+  );
+  const notifItems = filterNew(
+    rawNotifs.map(n => buildNotificationItem(n, fetchedAt)),
+    seenNotificationIds
+  );
+  const changeItems = filterNew(
+    rawChanges.map(c => buildChangeItem(c, fetchedAt)),
+    seenChangeIds
+  );
+  const assignmentItems = filterNew(
+    rawAssignments.map(a => buildAssignmentItem(a, fetchedAt)).filter(Boolean),
+    seenClassroomIds
+  );
+  const announcementItems = filterNew(
+    rawAnnouncements.map(a => buildAnnouncementItem(a, fetchedAt)),
+    seenClassroomIds
+  );
+
+  log('[webtop] messages: fetched %d, new %d', rawMessages.length, messageItems.length);
+  log('[webtop] notifications: fetched %d, new %d', rawNotifs.length, notifItems.length);
+  log('[webtop] changes: fetched %d, new %d', rawChanges.length, changeItems.length);
+  log('[classroom] assignments: fetched %d, new %d (submitted filtered)', rawAssignments.length, assignmentItems.length);
+  log('[classroom] announcements: fetched %d, new %d', rawAnnouncements.length, announcementItems.length);
+  if (state.lastFetch) {
+    const minsAgo = Math.round((Date.now() - new Date(state.lastFetch)) / 60000);
+    log('[state] lastFetch was %d minutes ago', minsAgo);
+  }
+
+  const items = [...messageItems, ...notifItems, ...changeItems, ...assignmentItems, ...announcementItems];
+
+  console.log(JSON.stringify({ ok: true, meta: { fetchedAt }, items }));
 }
