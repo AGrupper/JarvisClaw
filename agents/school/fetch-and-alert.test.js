@@ -103,3 +103,18 @@ describe('buildAssignmentItem', () => {
     assert.equal(item, null);
   });
 });
+
+describe('buildNotificationItem', () => {
+  it('uses itemId as id', () => {
+    const raw = {
+      itemId: 'abc123',
+      id: 0,
+      message: 'Homework updated',
+      date: '2026-04-14'
+    };
+    const item = buildNotificationItem(raw, NOW);
+    assert.equal(item.id, 'abc123');
+    assert.equal(item.source, 'webtop');
+    assert.equal(item.type, 'notification');
+  });
+});

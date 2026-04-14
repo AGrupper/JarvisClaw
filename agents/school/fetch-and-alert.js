@@ -54,7 +54,7 @@ function buildMessageItem(raw, fetchedAt) {
 /** Build a structured item from a Webtop notification */
 function buildNotificationItem(raw, fetchedAt) {
   return {
-    id: String(raw.id || raw.notificationId),
+    id: String(raw.itemId || raw.id),
     source: 'webtop',
     type: 'notification',
     title: raw.title || raw.message?.slice(0, 80) || '',
