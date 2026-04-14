@@ -130,7 +130,11 @@ For each URGENT item: run `openclaw system event --text "SCHOOL_ALERT: <concise 
 For each NON_URGENT item: append to pendingAlerts in agents/school/state.json with delivered: false
 
 Then update agents/school/state.json:
-- Add all item IDs to the appropriate seen set (seenMessageIds, seenNotificationIds, seenClassroomIds)
+- Webtop messages (type: "message") → seenMessageIds
+- Webtop notifications (type: "notification") → seenNotificationIds
+- Webtop today-changes (type: "change") → seenChangeIds
+- Classroom assignments (type: "assignment") → seenClassroomIds
+- Classroom announcements (type: "announcement") → seenClassroomIds
 - Set lastFetch to fetchedAt from meta
 ```
 
@@ -154,6 +158,7 @@ openclaw cron add \
   "lastFetch": "2026-04-14T08:00:00Z",
   "seenMessageIds": [],
   "seenNotificationIds": [],
+  "seenChangeIds": [],
   "seenClassroomIds": [],
   "pendingAlerts": [
     {
