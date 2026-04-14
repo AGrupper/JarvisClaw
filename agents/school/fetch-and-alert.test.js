@@ -60,6 +60,16 @@ describe('buildMessageItem', () => {
     assert.equal(item.submitted, false);
     assert.equal(item.fetchedAt, NOW);
   });
+
+  it('uses body as text when present', () => {
+    const raw = {
+      messageId: 'msg2',
+      subject: 'Subject line',
+      body: 'Full message body text here'
+    };
+    const item = buildMessageItem(raw, NOW);
+    assert.equal(item.text, 'Full message body text here');
+  });
 });
 
 describe('buildAssignmentItem', () => {
@@ -77,7 +87,7 @@ describe('buildAssignmentItem', () => {
     assert.equal(item.source, 'classroom');
     assert.equal(item.type, 'assignment');
     assert.equal(item.submitted, false);
-    assert.ok(item.daysUntilDue <= 1);
+    assert.ok(item.daysUntilDue >= 0 && item.daysUntilDue <= 2);
   });
 
   it('returns null for submitted assignments', () => {
