@@ -8,10 +8,14 @@
 
 ## School Alerts
 
-Read `agents/school/state.json`. If `pendingAlerts` contains any entries where `delivered` is `false`:
+Read `~/.openclaw/workspace/agents/school/state.json`. If the file is missing or unreadable, skip this section silently.
+
+If `pendingAlerts` contains any entries where `delivered` is `false`:
 
 - Surface each alert to Amit (one line per entry, using the `summary` field)
-- After surfacing, set `delivered: true` on each surfaced entry and write `state.json` back
+- Immediately before writing back: re-read `~/.openclaw/workspace/agents/school/state.json` to get the latest version (the cron agent may have added new entries since your initial read)
+- Set `delivered: true` on each entry you surfaced, merge with the freshly-read file, and write it back
+- If the write fails, do not re-surface these alerts at the next heartbeat — report the write failure to Amit instead
 
 Example output line:
 > **School:** New announcement in Math — office hours moved to Thursday

@@ -33,10 +33,12 @@ cat ~/.openclaw/workspace/agents/school/state.json
 Check `lastFetch`. If it was more than 25 minutes ago, or if Amit asks for "latest" / "right now", run a live fetch:
 
 ```bash
-node ~/.openclaw/workspace/agents/school/fetch-and-alert.js --verbose
+node ~/.openclaw/workspace/agents/school/fetch-and-alert.js
 ```
 
 Read stdout (JSON). Use the items array to answer. Do not fire system events from here — just answer.
+
+Do not update state.json from this path — the cron agent owns all state writes.
 
 **Step 2 — Answer concisely**
 
