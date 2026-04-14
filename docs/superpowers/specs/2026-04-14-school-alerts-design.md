@@ -228,6 +228,12 @@ Surface the alert text clearly to Amit. The cron agent has already classified it
 
 ---
 
+## Known Limitations
+
+- **Stale submitted assignments in pendingAlerts:** If an assignment is queued as NON_URGENT and then submitted before the next heartbeat surfaces it, it'll still appear as a pending alert. Rare in practice (URGENT assignments are alerted immediately and usually submitted before they go NON_URGENT), but not automatically cleared. Can be addressed in a future iteration by re-checking submission status for items already in pendingAlerts.
+
+---
+
 ## Files To Create/Modify
 
 | File | Action |
