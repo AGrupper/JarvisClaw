@@ -1,0 +1,4 @@
+node_modules/
+agents/school/cookies.json
+.clawhub/
+.openclaw/
