@@ -11,7 +11,7 @@ Fetch calendar, weather, email, and Garmin health data, then compose and return 
 
 ### 1. Fetch in parallel
 
-Run all four fetches simultaneously:
+Run all five fetches simultaneously:
 
 **Weather** (Tel Aviv):
 ```bash
@@ -53,13 +53,13 @@ Keep only actionable emails — real senders, meaningful subjects. Skip newslett
 
 See `references/briefing-format.md` for the exact layout, voice spec, and how to weave the Garmin health insight into the summary line. There is no separate Body section — the health recommendation belongs in the opening summary.
 
-If there are undelivered school alerts, include the `🏫 School Alerts` section as the last section. Surface urgent alerts first (`urgent: true`), then non-urgent. Use the alert's `text` field as the bullet content.
+If there are undelivered school alerts, include the `🏫 School Alerts` section as the last section. Surface urgent alerts first (`urgent: true`), then non-urgent. Use the alert's `summary` field as the bullet content.
 
 ### 3.5. Mark school alerts delivered
 
 If school alerts were surfaced in Step 3:
 - Re-read `~/.openclaw/workspace/agents/school/state.json`
-- For each alert you surfaced, find the matching entry by `id` and set `delivered: true`
+- For each alert you surfaced, find the matching entry by `id` and set `delivered: true`. If an entry with that `id` is not found in the re-read file, skip it silently.
 - Write the updated file back
 
 If the write fails, note the failure in the briefing output but still return the briefing.
