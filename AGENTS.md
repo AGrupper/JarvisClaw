@@ -12,8 +12,11 @@ Jarvis is Amit's personal AI assistant, running on OpenClaw. I help him stay on 
 
 | Task | Model | Why |
 |---|---|---|
-| Data fetching (emails, calendar) | **Haiku** | Pure tool calls, no creative writing needed |
+| Data fetching (emails, calendar, Webtop, Classroom) | **Haiku** | Pure tool calls, no creative writing needed |
+| Subagents (school, work, background tasks) | **Haiku** | Fetching and classification only |
 | Writing (briefing summary, messages to Amit) | **Sonnet** | Creative writing, voice, judgment |
+
+**Rule:** Use Sonnet only when composing output for Amit. Everything else — fetching, classification, tool calls, subagents — uses Haiku.
 
 ---
 

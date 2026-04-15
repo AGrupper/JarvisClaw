@@ -1,204 +1,248 @@
+#!/usr/bin/env node
 /**
- * School fetch-and-alert script
- *
- * Reads state.json for seen IDs, fetches Webtop + Classroom in parallel,
- * deduplicates, and emits structured JSON to stdout.
- * All state writes and event dispatch are handled by the calling agent.
+ * fetch-and-alert.js
+ * Fetches school data from Webtop and Google Classroom.
+ * Outputs clean JSON to stdout. No side effects — agent handles state + alerts.
  *
  * Usage:
  *   node fetch-and-alert.js [--verbose]
  *
- * Stdout: JSON { ok, error?, items[], meta }
- * Stderr (--verbose only): fetch counts and skipped item summaries
+ * Output:
+ *   { ok: true, meta: { fetchedAt }, items: [...] }
+ *   { ok: false, error: "webtop_auth_expired"|"fetch_failed", detail?: "..." }
  */
 
-'use strict';
-
-const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
+const { execSync } = require('child_process');
+
+const verbose = process.argv.includes('--verbose');
+const log = (...args) => { if (verbose) process.stderr.write(args.join(' ') + '\n'); };
+
+// ── Load state (seen IDs only) ───────────────────────────────────────────────
 
 const STATE_PATH = path.join(__dirname, 'state.json');
-const verbose = process.argv.includes('--verbose');
 
-function log(...args) {
-  if (verbose) console.error(...args);
+function loadState() {
+  try {
+    return JSON.parse(require('fs').readFileSync(STATE_PATH, 'utf8'));
+  } catch {
+    return { seenMessageIds: [], seenNotificationIds: [], seenChangeIds: [], seenClassroomIds: [] };
+  }
 }
 
-/** Returns items whose id is not in seenIds */
-function filterNew(items, seenIds) {
-  const seen = new Set(seenIds.map(String));
-  return items.filter(item => !seen.has(String(item.id)));
+// ── Webtop ───────────────────────────────────────────────────────────────────
+
+const webtop = require('./webtop-client');
+
+async function fetchWebtop(state) {
+  const items = [];
+
+  // Messages
+  let messages = [];
+  try {
+    messages = await webtop.getUnreadMessages(50);
+    const newMsgs = messages.filter(m => m.senderId && !state.seenMessageIds.includes(String(m.senderId + '_' + m.sendingDate)));
+    log(`[webtop] fetched ${messages.length} messages, ${newMsgs.length} new`);
+    for (const m of newMsgs) {
+      items.push({
+        id: m.senderId + '_' + m.sendingDate,
+        source: 'webtop',
+        type: 'message',
+        title: m.subject || '(no subject)',
+        text: `From: ${m.student_F_name || ''} ${m.student_L_name || ''}. ${m.subject || ''}`,
+        daysUntilDue: null,
+        submitted: false,
+        fetchedAt: new Date().toISOString()
+      });
+    }
+  } catch (e) {
+    throw new Error('webtop_messages: ' + e.message);
+  }
+
+  // Notifications
+  let notifs = [];
+  try {
+    const result = await webtop.getUnreadNotifications();
+    const personal = result?.personalNotifications || [];
+    const newNotifs = personal.filter(n => !state.seenNotificationIds.includes(String(n.id || n.itemId)));
+    log(`[webtop] fetched ${personal.length} notifications, ${newNotifs.length} new`);
+    for (const n of newNotifs) {
+      items.push({
+        id: String(n.id || n.itemId),
+        source: 'webtop',
+        type: 'notification',
+        title: n.message?.slice(0, 80) || 'Notification',
+        text: n.message || '',
+        daysUntilDue: null,
+        submitted: false,
+        fetchedAt: new Date().toISOString()
+      });
+    }
+  } catch (e) {
+    throw new Error('webtop_notifications: ' + e.message);
+  }
+
+  // Today changes
+  try {
+    const changes = await webtop.getChangesAndMessagesToday();
+    const allChanges = [
+      ...(changes?.changes || []),
+      ...(changes?.events || []),
+    ];
+    const newChanges = allChanges.filter(c => !state.seenChangeIds.includes(String(c.id)));
+    log(`[webtop] fetched ${allChanges.length} changes, ${newChanges.length} new`);
+    for (const c of newChanges) {
+      items.push({
+        id: String(c.id),
+        source: 'webtop',
+        type: 'change',
+        title: c.title || c.description || 'Schedule change',
+        text: c.description || c.title || '',
+        daysUntilDue: null,
+        submitted: false,
+        fetchedAt: new Date().toISOString()
+      });
+    }
+  } catch (e) {
+    log('[webtop] changes fetch failed (non-fatal):', e.message);
+  }
+
+  return items;
 }
 
-/** Synthesize a stable ID for a Webtop today-change (API has no native ID) */
-function changeId(raw) {
-  const stable = JSON.stringify(raw, Object.keys(raw).sort());
-  return 'chg_' + crypto.createHash('md5').update(stable).digest('hex').slice(0, 12);
+// ── Google Classroom ─────────────────────────────────────────────────────────
+
+function gws(args) {
+  try {
+    const out = execSync(`gws ${args}`, { encoding: 'utf8', timeout: 15000, stdio: ['pipe', 'pipe', 'pipe'] });
+    return JSON.parse(out);
+  } catch {
+    return null;
+  }
 }
 
-/** Build a structured item from a Webtop unread message */
-function buildMessageItem(raw, fetchedAt) {
-  return {
-    id: String(raw.messageId || raw.id),
-    source: 'webtop',
-    type: 'message',
-    title: raw.subject || '',
-    text: raw.body || raw.subject || '',
-    daysUntilDue: null,
-    submitted: false,
-    fetchedAt
-  };
+async function fetchClassroom(state) {
+  const items = [];
+  const now = new Date();
+
+  const coursesResult = gws('classroom courses list --params \'{"studentId": "me", "courseStates": ["ACTIVE"]}\'');
+  const courses = coursesResult?.courses || [];
+  log(`[classroom] found ${courses.length} active courses`);
+
+  for (const course of courses) {
+    // Coursework
+    const cwResult = gws(`classroom courses.courseWork list --params '{"courseId": "${course.id}", "courseWorkStates": ["PUBLISHED"], "orderBy": "dueDate asc"}'`);
+    const courseWork = cwResult?.courseWork || [];
+
+    for (const cw of courseWork) {
+      if (!cw.dueDate) continue;
+      if (state.seenClassroomIds.includes(cw.id)) continue;
+
+      const due = new Date(`${cw.dueDate.year}-${String(cw.dueDate.month).padStart(2,'0')}-${String(cw.dueDate.day).padStart(2,'0')}`);
+      const daysUntilDue = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+      if (daysUntilDue < 0 || daysUntilDue > 14) continue; // skip past or far future
+
+      // Check submission status
+      const subsResult = gws(`classroom courses.courseWork.studentSubmissions list --params '{"courseId": "${course.id}", "courseWorkId": "${cw.id}", "userId": "me"}'`);
+      const sub = subsResult?.studentSubmissions?.[0];
+      const submitted = sub?.state === 'TURNED_IN' || sub?.state === 'RETURNED';
+
+      if (submitted) {
+        log(`[classroom] ${cw.title} — already submitted, skipping`);
+        continue;
+      }
+
+      items.push({
+        id: cw.id,
+        source: 'classroom',
+        type: 'assignment',
+        title: cw.title,
+        text: `${course.name}: ${cw.title}. Due in ${daysUntilDue} day(s).`,
+        daysUntilDue,
+        submitted: false,
+        fetchedAt: new Date().toISOString()
+      });
+    }
+
+    // Announcements (last 48h)
+    const annResult = gws(`classroom courses.announcements list --params '{"courseId": "${course.id}"}'`);
+    const announcements = annResult?.announcements || [];
+    const cutoff = new Date(now.getTime() - 48 * 60 * 60 * 1000);
+
+    for (const ann of announcements) {
+      if (state.seenClassroomIds.includes(ann.id)) continue;
+      const created = new Date(ann.creationTime);
+      if (created < cutoff) continue;
+
+      items.push({
+        id: ann.id,
+        source: 'classroom',
+        type: 'announcement',
+        title: `${course.name}: ${(ann.text || '').slice(0, 60)}`,
+        text: ann.text || '',
+        daysUntilDue: null,
+        submitted: false,
+        fetchedAt: new Date().toISOString()
+      });
+    }
+  }
+
+  log(`[classroom] ${items.length} new items`);
+  return items;
 }
 
-/** Build a structured item from a Webtop notification */
-function buildNotificationItem(raw, fetchedAt) {
-  return {
-    id: raw.itemId ? String(raw.itemId) : (raw.id ? String(raw.id) : changeId(raw)),
-    source: 'webtop',
-    type: 'notification',
-    title: raw.title || raw.message?.slice(0, 80) || '',
-    text: raw.message || '',
-    daysUntilDue: null,
-    submitted: false,
-    fetchedAt
-  };
-}
-
-/** Build a structured item from a Webtop today-change (synthesized ID) */
-function buildChangeItem(raw, fetchedAt) {
-  return {
-    id: changeId(raw),
-    source: 'webtop',
-    type: 'change',
-    title: raw.title || raw.description?.slice(0, 80) || 'Schedule change',
-    text: JSON.stringify(raw),
-    daysUntilDue: null,
-    submitted: false,
-    fetchedAt
-  };
-}
-
-/**
- * Build a structured item from a Classroom assignment.
- * Returns null if the assignment is submitted (caller should filter nulls).
- */
-function buildAssignmentItem(raw, fetchedAt) {
-  if (raw.submitted) return null;
-  const due = raw.dueDate ? new Date(raw.dueDate) : null;
-  const daysUntilDue = due
-    ? Math.ceil((due - Date.now()) / (1000 * 60 * 60 * 24))
-    : null;
-  return {
-    id: String(raw.id),
-    source: 'classroom',
-    type: 'assignment',
-    title: `${raw.courseName}: ${raw.title}`,
-    text: raw.title || '',
-    daysUntilDue,
-    submitted: false,
-    fetchedAt
-  };
-}
-
-/** Build a structured item from a Classroom announcement */
-function buildAnnouncementItem(raw, fetchedAt) {
-  return {
-    id: String(raw.id),
-    source: 'classroom',
-    type: 'announcement',
-    title: `${raw.courseName}: announcement`,
-    text: raw.text || '',
-    daysUntilDue: null,
-    submitted: false,
-    fetchedAt
-  };
-}
-
-module.exports = { filterNew, changeId, buildMessageItem, buildNotificationItem, buildChangeItem, buildAssignmentItem, buildAnnouncementItem };
-
-if (require.main === module) {
-  main().catch(err => {
-    console.log(JSON.stringify({ ok: false, error: 'fetch_failed', detail: err.message }));
-    process.exit(0);
-  });
-}
+// ── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const webtop = require('./webtop-client');
-  const { fetchAllClassroomData } = require('./gws-classroom');
-
-  // Load state for deduplication
-  const state = JSON.parse(fs.readFileSync(STATE_PATH, 'utf8'));
-  const seenMessageIds = Array.isArray(state.seenMessageIds) ? state.seenMessageIds : [];
-  const seenNotificationIds = Array.isArray(state.seenNotificationIds) ? state.seenNotificationIds : [];
-  const seenChangeIds = Array.isArray(state.seenChangeIds) ? state.seenChangeIds : [];
-  const seenClassroomIds = Array.isArray(state.seenClassroomIds) ? state.seenClassroomIds : [];
-
   const fetchedAt = new Date().toISOString();
 
-  // Auth check first: getMenuCounters returns null when session is expired
-  // (getUnreadMessages returns [] not null on failure, so counters is the reliable signal)
-  const counters = await webtop.getMenuCounters().catch(() => null);
-  if (counters === null) {
-    console.log(JSON.stringify({ ok: false, error: 'webtop_auth_expired' }));
-    return;
+  // Quiet hours: don't run between 23:00 and 07:00 (Asia/Jerusalem)
+  const hour = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem', hour: 'numeric', hour12: false });
+  const h = parseInt(hour);
+  if (h >= 23 || h < 7) {
+    log('[main] quiet hours — skipping fetch');
+    process.stdout.write(JSON.stringify({ ok: true, meta: { fetchedAt }, items: [], skipped: 'quiet_hours' }) + '\n');
+    process.exit(0);
   }
 
-  // Fetch all sources in parallel
-  let messages, notifs, changes, classroom;
+  const state = loadState();
+
+  // Check auth by trying a counters call
   try {
-    [messages, notifs, changes, classroom] = await Promise.all([
-      webtop.getUnreadMessages(50),
-      webtop.getUnreadNotifications(),
-      webtop.getChangesAndMessagesToday(),
-      fetchAllClassroomData().catch(() => null)
-    ]);
-  } catch (err) {
-    console.log(JSON.stringify({ ok: false, error: 'fetch_failed', detail: err.message }));
-    return;
+    const counters = await webtop.getMenuCounters();
+    if (counters === null) {
+      process.stdout.write(JSON.stringify({ ok: false, error: 'webtop_auth_expired' }) + '\n');
+      process.exit(0);
+    }
+  } catch (e) {
+    process.stdout.write(JSON.stringify({ ok: false, error: 'fetch_failed', detail: e.message }) + '\n');
+    process.exit(0);
   }
 
-  // Normalize raw responses
-  const rawMessages = Array.isArray(messages) ? messages : [];
-  const rawNotifs = Array.isArray(notifs?.personalNotifications) ? notifs.personalNotifications : [];
-  const rawChanges = Array.isArray(changes) ? changes : (changes ? [changes] : []);
-  const rawAssignments = classroom?.upcoming || [];
-  const rawAnnouncements = classroom?.announcements || [];
+  let items = [];
 
-  // Build structured items
-  const messageItems = filterNew(
-    rawMessages.map(m => buildMessageItem(m, fetchedAt)),
-    seenMessageIds
-  );
-  const notifItems = filterNew(
-    rawNotifs.map(n => buildNotificationItem(n, fetchedAt)),
-    seenNotificationIds
-  );
-  const changeItems = filterNew(
-    rawChanges.map(c => buildChangeItem(c, fetchedAt)),
-    seenChangeIds
-  );
-  const assignmentItems = filterNew(
-    rawAssignments.map(a => buildAssignmentItem(a, fetchedAt)).filter(Boolean),
-    seenClassroomIds
-  );
-  const announcementItems = filterNew(
-    rawAnnouncements.map(a => buildAnnouncementItem(a, fetchedAt)),
-    seenClassroomIds
-  );
-
-  log('[webtop] messages: fetched %d, new %d', rawMessages.length, messageItems.length);
-  log('[webtop] notifications: fetched %d, new %d', rawNotifs.length, notifItems.length);
-  log('[webtop] changes: fetched %d, new %d', rawChanges.length, changeItems.length);
-  log('[classroom] assignments: fetched %d, new %d (submitted filtered)', rawAssignments.length, assignmentItems.length);
-  log('[classroom] announcements: fetched %d, new %d', rawAnnouncements.length, announcementItems.length);
-  if (state.lastFetch) {
-    const minsAgo = Math.round((Date.now() - new Date(state.lastFetch)) / 60000);
-    log('[state] lastFetch was %d minutes ago', minsAgo);
+  try {
+    const webtopItems = await fetchWebtop(state);
+    items = items.concat(webtopItems);
+  } catch (e) {
+    process.stdout.write(JSON.stringify({ ok: false, error: 'fetch_failed', detail: e.message }) + '\n');
+    process.exit(0);
   }
 
-  const items = [...messageItems, ...notifItems, ...changeItems, ...assignmentItems, ...announcementItems];
+  try {
+    const classroomItems = await fetchClassroom(state);
+    items = items.concat(classroomItems);
+  } catch (e) {
+    log('[classroom] fetch failed (non-fatal):', e.message);
+    // Classroom failure is non-fatal — continue with webtop items
+  }
 
-  console.log(JSON.stringify({ ok: true, meta: { fetchedAt }, items }));
+  log(`[done] ${items.length} total new items`);
+
+  process.stdout.write(JSON.stringify({ ok: true, meta: { fetchedAt }, items }) + '\n');
 }
+
+main().catch(e => {
+  process.stdout.write(JSON.stringify({ ok: false, error: 'fetch_failed', detail: e.message }) + '\n');
+  process.exit(0);
+});
