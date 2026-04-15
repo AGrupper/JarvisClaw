@@ -74,3 +74,15 @@ openclaw cron run school-fetch
 
 To re-register if lost, see the full cron message in:
 `docs/superpowers/specs/2026-04-14-school-alerts-design.md` (Section 2)
+
+## Urgent Dispatch — Verification Status
+
+The cron prompt uses `openclaw system event --text "SCHOOL_ALERT: ..." --mode now` for urgent items.
+This command requires a paired OpenClaw session to run — it cannot be tested from a bare shell.
+The cron agent runs as a paired session, so it should work.
+
+**TODO:** Verify on first real urgent item (absence, cancellation, schedule change). If the event does not
+fire, re-register the cron replacing `--mode now` with:
+```bash
+--url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
+```
