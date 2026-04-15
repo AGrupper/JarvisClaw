@@ -40,7 +40,7 @@
 - No separate Body section — Garmin insight is woven into the summary line
 - Omit **📧 Email Highlights** section if nothing actionable (or write "Nothing actionable.")
 - Omit **✅ Today's Tasks** section if no tasks tool is available
-- Omit **🏫 School Alerts** section if no undelivered alerts (no heading, no divider)
+- Omit **🏫 School Alerts** section entirely if no undelivered alerts — no heading, no content, and no preceding divider
 - Surface urgent alerts first (where `urgent: true`), then non-urgent
 - All-day events and holidays: skip unless genuinely relevant
 
