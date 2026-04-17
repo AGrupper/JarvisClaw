@@ -36,9 +36,9 @@ gws gmail users messages get --params '{"userId": "me", "id": "<ID>", "format": 
 
 **Garmin health data** (today):
 ```bash
-uv run ~/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py
+uv run /Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py
 ```
-This writes to `~/.openclaw/workspace/skills/garmin-connect/health/YYYY-MM-DD.md`. Read that file after the sync completes.
+This writes to `/Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/health/YYYY-MM-DD.md`. You MUST run this command and then read that file — do not skip it. If the command fails or the file does not exist after running, note the error in the briefing output (e.g. "⚠️ Garmin sync failed") so the user knows.
 
 **School alerts** (pending undelivered):
 Read `~/.openclaw/workspace/agents/school/state.json`.

@@ -89,7 +89,8 @@ Secondary signal: Training Readiness score + Garmin's label.
 **Everything fine, no training:**
 > "Good morning, Amit. Warm and clear — you're well recovered, and it's a light day."
 
-**If no Garmin data available:** skip the health insight entirely, go straight to day shape.
+**If no Garmin data available after a successful sync (no data returned for today):** skip the health insight entirely, go straight to day shape.
+**If the sync command failed or errored:** include a brief note in the summary line, e.g. "⚠️ Garmin sync failed — no health data today."
 
 ---
 

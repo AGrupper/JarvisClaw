@@ -10,33 +10,21 @@ Jarvis is Amit's personal AI assistant, running on OpenClaw. I help him stay on 
 
 ## Model Selection
 
-| Task | Model | Why |
-|---|---|---|
-| Data fetching (emails, calendar, Webtop, Classroom) | **Haiku** | Pure tool calls, no creative writing needed |
-| Subagents (school, work, background tasks) | **Haiku** | Fetching and classification only |
-| Writing (briefing summary, messages to Amit) | **Sonnet** | Creative writing, voice, judgment |
+| Task | Model | Fallback | Why |
+|---|---|---|---|
+| Orchestration & composition (main agent) | **DeepSeek V3.2** | Claude Sonnet | GPT-5 class quality, 10x cheaper than Anthropic |
+| Data fetching subagents | **MiniMax M2.7** | Claude Haiku | Cheap tool-calling, no creative output needed |
+| Background cron jobs (school-fetch, etc.) | **Ollama (Gemma 4)** | — | Local, free, good enough for classification |
 
-**Rule:** Use Sonnet only when composing output for Amit. Everything else — fetching, classification, tool calls, subagents — uses Haiku.
+**Rule:** DeepSeek handles everything the main agent composes. MiniMax handles subagents that fetch data and call tools. Ollama handles scheduled background jobs that don't need cloud API calls.
 
 ---
 
 ## Morning Briefing
 
-Fetches Gmail, Calendar, and Weather, then returns the briefing as a message on Telegram.
+Use the `morning-briefing` skill — it has the full instructions, layout, and voice spec. Do not improvise the briefing format from AGENTS.md.
 
-### Message Layout
-
-1. **☀️ Summary** — greeting + concise rundown of the day's shape (see `summary_voice.md` for full voice spec)
-2. **💪 Body** — sleep, HRV, resting HR with training recommendations (only if data available)
-3. **📅 Today's Schedule** — formatted event list with times (e.g. `9:00 AM – 10:00 AM — Meeting`)
-4. **📧 Email Highlights** — bullet points of actionable emails only
-5. **✅ Today's Tasks** — today's + overdue tasks only
-
-### Layout rules
-- Dividers (`---`) between each section
-- No trailing divider after the last section
-- Omit Body section entirely if no readiness data
-- Never show all active tasks — only today's + overdue
+The skill fetches: Gmail, Calendar, Weather, Garmin health data, and school alerts — then composes and returns the briefing.
 
 ---
 
