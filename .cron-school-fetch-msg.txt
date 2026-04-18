@@ -22,7 +22,8 @@ Classify as NON_URGENT otherwise.
 
 For EVERY item (both URGENT and NON_URGENT):
   Read /Users/amitgrupper/.openclaw/workspace/agents/school/state.json
-  Append to pendingAlerts array:
+  Skip this item if any entry in pendingAlerts already has the same "summary" value AND delivered is false.
+  Otherwise, append to pendingAlerts array:
     { "id": "<item.id>", "source": "<item.source>", "type": "<item.type>", "summary": "<one-line summary in the content language>", "addedAt": "<item.fetchedAt>", "delivered": false, "urgent": <true if URGENT, false if NON_URGENT> }
   Write state.json back.
 
@@ -31,8 +32,11 @@ For each URGENT item, also attempt (best-effort — do not fail if this errors):
 
 After all items are processed, update /Users/amitgrupper/.openclaw/workspace/agents/school/state.json:
   - Add IDs of type "message" items to seenMessageIds (no duplicates)
+  - Add all IDs in meta.collapsedMessageIds to seenMessageIds (no duplicates)
   - Add IDs of type "notification" items to seenNotificationIds (no duplicates)
+  - Add all IDs in meta.collapsedNotificationIds to seenNotificationIds (no duplicates)
   - Add IDs of type "change" items to seenChangeIds (no duplicates)
+  - Add all IDs in meta.collapsedChangeIds to seenChangeIds (no duplicates)
   - Add IDs of type "assignment" or "announcement" items to seenClassroomIds (no duplicates)
   - Set lastFetch to meta.fetchedAt
   Write state.json back.

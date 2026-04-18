@@ -30,21 +30,43 @@ function loadState() {
   }
 }
 
+// ── Content dedup ────────────────────────────────────────────────────────────
+
+// Groups items by keyFn result; keeps the first in each group, collects the
+// remaining IDs into collapsedIds so the caller can still mark them seen.
+function dedupByContent(items, keyFn) {
+  const seen = new Map();
+  const collapsedIds = [];
+  for (const item of items) {
+    const key = keyFn(item).trim();
+    if (seen.has(key)) {
+      collapsedIds.push(item.id);
+    } else {
+      seen.set(key, item);
+    }
+  }
+  return { kept: [...seen.values()], collapsedIds };
+}
+
 // ── Webtop ───────────────────────────────────────────────────────────────────
 
 const webtop = require('./webtop-client');
 
 async function fetchWebtop(state) {
-  const items = [];
+  let msgItems = [];
+  let notifItems = [];
+  let changeItems = [];
+  const collapsedMessageIds = [];
+  const collapsedNotificationIds = [];
+  const collapsedChangeIds = [];
 
   // Messages
-  let messages = [];
   try {
-    messages = await webtop.getUnreadMessages(50);
+    const messages = await webtop.getUnreadMessages(50);
     const newMsgs = messages.filter(m => m.senderId && !state.seenMessageIds.includes(String(m.senderId + '_' + m.sendingDate)));
     log(`[webtop] fetched ${messages.length} messages, ${newMsgs.length} new`);
     for (const m of newMsgs) {
-      items.push({
+      msgItems.push({
         id: m.senderId + '_' + m.sendingDate,
         source: 'webtop',
         type: 'message',
@@ -55,19 +77,22 @@ async function fetchWebtop(state) {
         fetchedAt: new Date().toISOString()
       });
     }
+    const deduped = dedupByContent(msgItems, item => item.title + '\0' + item.text);
+    collapsedMessageIds.push(...deduped.collapsedIds);
+    msgItems = deduped.kept;
+    if (deduped.collapsedIds.length) log(`[webtop] collapsed ${deduped.collapsedIds.length} duplicate messages`);
   } catch (e) {
     throw new Error('webtop_messages: ' + e.message);
   }
 
   // Notifications
-  let notifs = [];
   try {
     const result = await webtop.getUnreadNotifications();
     const personal = result?.personalNotifications || [];
     const newNotifs = personal.filter(n => !state.seenNotificationIds.includes(String(n.id || n.itemId)));
     log(`[webtop] fetched ${personal.length} notifications, ${newNotifs.length} new`);
     for (const n of newNotifs) {
-      items.push({
+      notifItems.push({
         id: String(n.id || n.itemId),
         source: 'webtop',
         type: 'notification',
@@ -78,6 +103,10 @@ async function fetchWebtop(state) {
         fetchedAt: new Date().toISOString()
       });
     }
+    const deduped = dedupByContent(notifItems, item => item.text);
+    collapsedNotificationIds.push(...deduped.collapsedIds);
+    notifItems = deduped.kept;
+    if (deduped.collapsedIds.length) log(`[webtop] collapsed ${deduped.collapsedIds.length} duplicate notifications`);
   } catch (e) {
     throw new Error('webtop_notifications: ' + e.message);
   }
@@ -92,7 +121,7 @@ async function fetchWebtop(state) {
     const newChanges = allChanges.filter(c => !state.seenChangeIds.includes(String(c.id)));
     log(`[webtop] fetched ${allChanges.length} changes, ${newChanges.length} new`);
     for (const c of newChanges) {
-      items.push({
+      changeItems.push({
         id: String(c.id),
         source: 'webtop',
         type: 'change',
@@ -103,11 +132,20 @@ async function fetchWebtop(state) {
         fetchedAt: new Date().toISOString()
       });
     }
+    const deduped = dedupByContent(changeItems, item => item.title + '\0' + item.text);
+    collapsedChangeIds.push(...deduped.collapsedIds);
+    changeItems = deduped.kept;
+    if (deduped.collapsedIds.length) log(`[webtop] collapsed ${deduped.collapsedIds.length} duplicate changes`);
   } catch (e) {
     log('[webtop] changes fetch failed (non-fatal):', e.message);
   }
 
-  return items;
+  return {
+    items: [...msgItems, ...notifItems, ...changeItems],
+    collapsedMessageIds,
+    collapsedNotificationIds,
+    collapsedChangeIds,
+  };
 }
 
 // ── Google Classroom ─────────────────────────────────────────────────────────
@@ -220,10 +258,16 @@ async function main() {
   }
 
   let items = [];
+  let collapsedMessageIds = [];
+  let collapsedNotificationIds = [];
+  let collapsedChangeIds = [];
 
   try {
-    const webtopItems = await fetchWebtop(state);
-    items = items.concat(webtopItems);
+    const webtopResult = await fetchWebtop(state);
+    items = items.concat(webtopResult.items);
+    collapsedMessageIds = webtopResult.collapsedMessageIds;
+    collapsedNotificationIds = webtopResult.collapsedNotificationIds;
+    collapsedChangeIds = webtopResult.collapsedChangeIds;
   } catch (e) {
     process.stdout.write(JSON.stringify({ ok: false, error: 'fetch_failed', detail: e.message }) + '\n');
     process.exit(0);
@@ -239,7 +283,11 @@ async function main() {
 
   log(`[done] ${items.length} total new items`);
 
-  process.stdout.write(JSON.stringify({ ok: true, meta: { fetchedAt }, items }) + '\n');
+  process.stdout.write(JSON.stringify({
+    ok: true,
+    meta: { fetchedAt, collapsedMessageIds, collapsedNotificationIds, collapsedChangeIds },
+    items,
+  }) + '\n');
 }
 
 main().catch(e => {

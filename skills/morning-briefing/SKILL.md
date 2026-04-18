@@ -88,6 +88,18 @@ If school alerts were surfaced in Step 3:
 
 If the write fails, note the failure in the briefing output but still return the briefing.
 
+### 4.5. Garmin guard — run before returning
+
+Pipe the composed briefing through the verification script:
+
+```bash
+echo "<composed briefing text>" | uv run /Users/amitgrupper/.openclaw/workspace/skills/morning-briefing/scripts/verify_briefing.py
+```
+
+If exit code is **non-zero**, the briefing has a State-3 bug (Garmin was not mentioned). Do **not** deliver it. Return to Step 1 and re-run the Garmin sync, then recompose.
+
+If exit code is **0**, proceed to Step 4.
+
 ### 4. Return
 
 Return the composed briefing directly as the reply. No preamble, no "here's your briefing", no status update before fetching.
