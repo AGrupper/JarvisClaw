@@ -89,8 +89,9 @@ Secondary signal: Training Readiness score + Garmin's label.
 **Everything fine, no training:**
 > "Good morning, Amit. Warm and clear — you're well recovered, and it's a light day."
 
-**If no Garmin data available after a successful sync (no data returned for today):** skip the health insight entirely, go straight to day shape.
-**If the sync command failed or errored:** include a brief note in the summary line, e.g. "⚠️ Garmin sync failed — no health data today."
+**State 1 — Sync ran AND today's health file exists with data:** weave a health insight into the summary line (see examples above).
+**State 2 — Sync ran AND today's file is missing or empty:** include `⚠️ Garmin sync produced no data today` in the summary line. Do NOT silently skip.
+**State 3 — Sync was not attempted:** this is a bug. Do not compose the briefing. Go back to Step 1 and run `uv run /Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py` now.
 
 ---
 
