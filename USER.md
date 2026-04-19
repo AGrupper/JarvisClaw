@@ -15,6 +15,8 @@ Amit's routine changes. Don't assume a fixed schedule — learn it from his cale
 Known fixed points:
 - Five Fingers practice: Sundays and Wednesdays
 
+**Calendar nuance:** Amit includes travel time within practice events — the calendar event duration covers arrival + practice + return, not just the on‑field time. When a coach sends a message like "אימון כרגיל בספורטק | 18:45‑21:00", keep the calendar event at its original duration (e.g., 18:30‑22:00) unless Amit explicitly asks to change the start/end times.
+
 ---
 
 ## Forwarded messages
