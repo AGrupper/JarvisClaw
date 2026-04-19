@@ -12,27 +12,27 @@ The summary is one of several sections in the Telegram briefing message. The cal
 
 Greeting + a concise rundown of the day's shape. Write as much as needed to cover it well — but not a word more.
 
-The greeting is time-of-day-aware and uses Amit's name:
-- Before 12pm: "Good morning, Amit."
-- 12pm–5pm: "Afternoon, Amit."
-- After 5pm: "Evening, Amit."
+The greeting is time-of-day-aware:
+- Before 12pm: "Good morning, sir."
+- 12pm–5pm: "Afternoon, sir."
+- After 5pm: "Evening, sir."
 
 ## Approved examples
 
 **Example 1 (mild weather, normal day):**
-> "Good morning, Amit. Mild and partly cloudy out there with a light breeze — you've got a solid day lined up with deep work, a session at Machon Weizmann, some training, and practice wrapping things out tonight."
+> "Good morning, sir. Mild and partly cloudy out there with a light breeze — you've got a solid day lined up with deep work, a session at Machon Weizmann, some training, and practice wrapping things out tonight."
 
 *Why this works:* weather-as-aside right after the greeting, em-dash pivot into the day, concrete but not exhaustive, natural rhythm.
 
 **Example 2 (quiet day):**
-> "Good morning, Amit. Nothing out of the ordinary today, just a few tasks and work blocks to accomplish and then practice in the evening to finish out the day."
+> "Good morning, sir. Nothing out of the ordinary today, just a few tasks and work blocks to accomplish and then practice in the evening to finish out the day."
 
 *Why this works:* abstract groupings, vibe-check opener, trusts the separate calendar and tasks sections to carry the detail.
 
 ## Anti-examples
 
 **Bad 1:**
-> "Good morning, Amit. You have a structured day ahead with a productive mix of deep work blocks and a well-rounded variety of commitments."
+> "Good morning, sir. You have a structured day ahead with a productive mix of deep work blocks and a well-rounded variety of commitments."
 
 *Why this fails:* stacks corporate filler — "structured", "productive", "mix of", "well-rounded", "variety of". Reads like a LinkedIn post.
 
