@@ -7,16 +7,17 @@ description: "Fetch and deliver Amit's daily briefing: weather (Tel Aviv), Googl
 
 Fetch calendar, weather, email, and Garmin health data, then compose and return the briefing in one shot. No intermediate status messages.
 
-## CRITICAL: Five tool calls are mandatory
+## CRITICAL: Six tool calls are mandatory
 
-This skill requires **exactly five parallel tool calls** in Step 1. If you find yourself composing the briefing with fewer than five tool calls in this turn, you have skipped a step — stop and run the missing one before continuing.
+This skill requires **exactly six parallel tool calls** in Step 1. If you find yourself composing the briefing with fewer than six tool calls in this turn, you have skipped a step — stop and run the missing one before continuing.
 
-The five mandatory calls are:
+The six mandatory calls are:
 1. **Garmin sync** — `uv run /Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py`
 2. **Weather** — `curl -s "wttr.in/Tel+Aviv?format=j1"`
 3. **Calendar** — `gws calendar +agenda --today --timezone Asia/Jerusalem --format json`
 4. **Email list** — `gws gmail users messages list ...`
 5. **School alerts** — read `~/.openclaw/workspace/agents/school/state.json`
+6. **Five Fingers state** — read `~/.openclaw/workspace/agents/five-fingers/state.json`
 
 There is no path through this skill that omits the Garmin sync. If the sync command fails, surface the failure in the briefing. If you skip it, that is a bug.
 
@@ -24,7 +25,7 @@ There is no path through this skill that omits the Garmin sync. If the sync comm
 
 ### 1. Fetch in parallel
 
-Run all five fetches simultaneously:
+Run all six fetches simultaneously:
 
 **Garmin health data** (today) — MANDATORY, run this first:
 ```bash
@@ -58,6 +59,10 @@ Read `~/.openclaw/workspace/agents/school/state.json`.
 Extract all items in `pendingAlerts` where `delivered: false`.
 If the file is missing, unreadable, or `pendingAlerts` is empty: skip silently — treat as no alerts.
 
+**Five Fingers state**:
+Read `~/.openclaw/workspace/agents/five-fingers/state.json`.
+If the file is missing or unreadable: use `{"exampleMessages":[],"teammates":[],"lastMorningBriefingMention":null}` as the default.
+
 ### 1.5. Self-check before composing
 
 Before writing a single word of the briefing, verify:
@@ -66,8 +71,9 @@ Before writing a single word of the briefing, verify:
 - [ ] `gws calendar` was called this turn
 - [ ] `gws gmail … list` was called this turn
 - [ ] School state.json was read this turn
+- [ ] Five Fingers state.json was read this turn
 
-If any box is unchecked, run that call now. Do not proceed until all five are checked.
+If any box is unchecked, run that call now. Do not proceed until all six are checked.
 
 ### 2. Filter email
 
@@ -76,6 +82,8 @@ Keep only actionable emails — real senders, meaningful subjects. Skip newslett
 ### 3. Compose the briefing
 
 See `references/briefing-format.md` for the exact layout, voice spec, and how to weave the Garmin health insight into the summary line. There is no separate Body section — the health recommendation belongs in the opening summary.
+
+**Five Fingers section:** Apply the logic in `skills/five-fingers/SKILL.md`, passing today's calendar events and the Five Fingers state read in Step 1. If the skill returns a section, include it **before** the 🏫 School Alerts section (or at the end if there are no school alerts).
 
 If there are undelivered school alerts, include the `🏫 School Alerts` section as the last section. Surface urgent alerts first (`urgent: true`), then non-urgent. Use the alert's `summary` field as the bullet content.
 
