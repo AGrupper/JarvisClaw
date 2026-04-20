@@ -1,5 +1,5 @@
 {
-  "lastFetch": "2026-04-17T18:20:05.120Z",
+  "lastFetch": "2026-04-20T00:41:47.986Z",
   "seenMessageIds": [
     "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHGO4MyhHGcHKVX7sVCN0TdG/uAqq3cAfMglpVbN3GQSk=",
     "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zH/IWsbd/bylbk2kV5b+mTYIM64u1Iu1nQey64cT2Fpiw=",
@@ -27,7 +27,12 @@
     "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJiq7iWVBWUzv5etUdttfSIh3aTiEYs75jS0XHu9EPLZ4=_2026-03-08T12:12:00",
     "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJJxN66OdPm4lVuumzPtZqVxr7BPvqeXBRTC/SOL97r+E=_2026-02-23T20:32:00",
     "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJiq7iWVBWUzv5etUdttfSIh3aTiEYs75jS0XHu9EPLZ4=_2026-02-23T14:28:00",
-    "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJ8tTUfqrayqOdG7eJ+UFXzGpMb8xcn0LpdAPLTG5DfIY=_2026-02-25T09:29:00"
+    "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJ8tTUfqrayqOdG7eJ+UFXzGpMb8xcn0LpdAPLTG5DfIY=_2026-02-25T09:29:00",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7ozH+vYWgcKCpO+LFDon5Wttf8HvwUy121onzEcrvJqlw=_2026-04-16T09:49:00",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7ozH+vYWgcKCpO+LFDon5Wttf8HvwUy121onzEcrvJqlw=_2026-03-08T12:12:00",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7o+7ES+bV9uTdKEeeHN1JBquEzECf3OVNXpZCLaH0utXA=_2026-02-25T09:29:00",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oHqMhpdf4EAj9C2iiU0iVIWjm8kVa2xJByLEHOFhg7aY=_2026-02-23T20:32:00",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7ozH+vYWgcKCpO+LFDon5Wttf8HvwUy121onzEcrvJqlw=_2026-02-23T14:28:00"
   ],
   "seenNotificationIds": [
     "f8uhMPQnQGVlorIg0qRqTFzvVhLAACU7BCVt9j2FNrwGcrkPXa25NnaMCMNyN3zHjFinhVEq9CVSox8uJ0BkTYkeDHpadXxyHtNutyVpW3w=",
@@ -49,11 +54,107 @@
     "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJrJX2kaIl5TWepiYII8ZwJ1iDP8M54zpx5z7ClM9dgYY=",
     "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJrJX2kaIl5TWepiYII8ZwJydSGwvLT/k+RfeJxo9LYpg=",
     "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJrJX2kaIl5TWepiYII8ZwJ1+iGAQ5p20wnGPWxiW0+Ds=",
-    "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJtl6yi3vs3lTU76e5NQAxA4sWhU5Fkq+NlLlaIy/VKiM="
+    "w/UHiNun4r+PUay/fIhhJqQF0OMhKAX5vc+b1Ov8GCJ76jVvRGQVvtF9R7719eGJtl6yi3vs3lTU76e5NQAxA4sWhU5Fkq+NlLlaIy/VKiM=",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5btW59RgDC+yGO0riLA0qMQ=",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5V5F3KcHVkZBq3AecIohZVk=",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5RVLGCflK8Zs+d3/pt4ZJS4=",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5VLH0v8fOx2xlBkqilj/sHc=",
+    "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oWwjzDjJwJXxMTPPmbNWwyc/a0uMvg7v+yDrmBEhPeko="
   ],
   "seenChangeIds": [
     "chg_19c7812240df"
   ],
   "seenClassroomIds": [],
-  "pendingAlerts": []
+  "pendingAlerts": [
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7ozH+vYWgcKCpO+LFDon5Wttf8HvwUy121onzEcrvJqlw=_2026-04-16T09:49:00",
+      "source": "webtop",
+      "type": "message",
+      "summary": "הגיע אליי טאבלט אבוד תוצרת ACER - מי שאיבד/ה נא להגיע לחדר 1.03",
+      "addedAt": "2026-04-19T12:48:14.586Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7ozH+vYWgcKCpO+LFDon5Wttf8HvwUy121onzEcrvJqlw=_2026-03-08T12:12:00",
+      "source": "webtop",
+      "type": "message",
+      "summary": "הגיע אליי אייפד עם כיסוי אחורי שחור מוקשח - ניתן לאסוף מחדר 1.03 בכפוף להנחיות הבטיחות",
+      "addedAt": "2026-04-19T12:48:14.586Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7o+7ES+bV9uTdKEeeHN1JBquEzECf3OVNXpZCLaH0utXA=_2026-02-25T09:29:00",
+      "source": "webtop",
+      "type": "message",
+      "summary": "מיקום בחינות מועד ב' שכבה י\"ב 25.2",
+      "addedAt": "2026-04-19T12:48:14.586Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oHqMhpdf4EAj9C2iiU0iVIWjm8kVa2xJByLEHOFhg7aY=_2026-02-23T20:32:00",
+      "source": "webtop",
+      "type": "message",
+      "summary": "אבד כיסוי איירפודס בצבע לבן",
+      "addedAt": "2026-04-19T12:48:14.586Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7ozH+vYWgcKCpO+LFDon5Wttf8HvwUy121onzEcrvJqlw=_2026-02-23T14:28:00",
+      "source": "webtop",
+      "type": "message",
+      "summary": "נמצא אייפד עם כיסוי ורוד - ניתן לקבלו בחדר 1.03",
+      "addedAt": "2026-04-19T12:48:14.586Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5btW59RgDC+yGO0riLA0qMQ=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "עודכנו שיעורי-בית \"דף עבודה ב classroom\" במדעי המחשב 14/04/2026 שיעור 1 (08:30-09:10)",
+      "addedAt": "2026-04-19T12:48:14.687Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5V5F3KcHVkZBq3AecIohZVk=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "עודכנו שיעורי-בית \"דף עבודה ב classroom\" במדעי המחשב 14/04/2026 שיעור 2 (09:15-09:55)",
+      "addedAt": "2026-04-19T12:48:14.687Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5RVLGCflK8Zs+d3/pt4ZJS4=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "נרשם חיסור במדעי המחשב 14/04/2026 שיעור 0 (07:45-08:25)",
+      "addedAt": "2026-04-19T12:48:14.687Z",
+      "delivered": true,
+      "urgent": true
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oEuaDG0Hx8J6rTkKl07ze5VLH0v8fOx2xlBkqilj/sHc=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "עודכנו שיעורי-בית \"דף עבודה ב classroom\" במדעי המחשב 14/04/2026 שיעור 0 (07:45-08:25)",
+      "addedAt": "2026-04-19T12:48:14.687Z",
+      "delivered": true,
+      "urgent": false
+    },
+    {
+      "id": "j5G7Si7iuDndXZSYPoYh80VI7v48deyH/TYQT75PXov7LzwEuzGHWo1xfvmJXS7oWwjzDjJwJXxMTPPmbNWwyc/a0uMvg7v+yDrmBEhPeko=",
+      "source": "webtop",
+      "type": "notification",
+      "summary": "עודכנו שיעורי-בית \"דף ע. 3 תרגילים ב-classroom\" במדעי המחשב 12/04/2026 שיעור 2 (09:15-09:55)",
+      "addedAt": "2026-04-19T12:48:14.687Z",
+      "delivered": true,
+      "urgent": false
+    }
+  ]
 }
