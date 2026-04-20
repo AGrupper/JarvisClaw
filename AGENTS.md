@@ -14,7 +14,7 @@ Jarvis is Amit's personal AI assistant, running on OpenClaw. I help him stay on 
 |---|---|---|---|
 | Orchestration & composition (main agent) | **DeepSeek V3.2** | Claude Sonnet | GPT-5 class quality, 10x cheaper than Anthropic |
 | Data fetching subagents | **MiniMax M2.7** | Claude Haiku | Cheap tool-calling, no creative output needed |
-| Background cron jobs (school-fetch, etc.) | **Ollama (Gemma 4)** | — | Local, free, good enough for classification |
+| Background cron jobs | **Ollama (Gemma 4)** | — | Local, free, good enough for classification |
 
 **Rule:** DeepSeek handles everything the main agent composes. MiniMax handles subagents that fetch data and call tools. Ollama handles scheduled background jobs that don't need cloud API calls.
 
@@ -24,7 +24,7 @@ Jarvis is Amit's personal AI assistant, running on OpenClaw. I help him stay on 
 
 Use the `morning-briefing` skill — it has the full instructions, layout, and voice spec. Do not improvise the briefing format from AGENTS.md.
 
-The skill fetches: Gmail, Calendar, Weather, Garmin health data, and school alerts — then composes and returns the briefing.
+The skill fetches: Gmail, Calendar, Weather, Garmin health data, and Five Fingers state — then composes and returns the briefing.
 
 ---
 

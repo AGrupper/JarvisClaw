@@ -5,109 +5,119 @@ description: "Fetch and deliver Amit's daily briefing: weather (Tel Aviv), Googl
 
 # Morning Briefing
 
-Fetch calendar, weather, email, and Garmin health data, then compose and return the briefing in one shot. No intermediate status messages.
+## HARD CONSTRAINT — read before doing anything else
 
-## CRITICAL: Six tool calls are mandatory
+**Output zero text until the final composed briefing.** There are exactly two turns:
 
-This skill requires **exactly six parallel tool calls** in Step 1. If you find yourself composing the briefing with fewer than six tool calls in this turn, you have skipped a step — stop and run the missing one before continuing.
+- **Turn 1:** Tool calls only — one bash block that fetches all data in parallel, then a second bash block to read results. No assistant text between or before these calls.
+- **Turn 2:** The composed briefing and nothing else. No preamble. No "here's your briefing". The first character of your reply is the ☀️ emoji.
 
-The six mandatory calls are:
-1. **Garmin sync** — `uv run /Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py`
-2. **Weather** — `curl -s "wttr.in/Tel+Aviv?format=j1"`
-3. **Calendar** — `gws calendar +agenda --today --timezone Asia/Jerusalem --format json`
-4. **Email list** — `gws gmail users messages list ...`
-5. **School alerts** — read `~/.openclaw/workspace/agents/school/state.json`
-6. **Five Fingers state** — read `~/.openclaw/workspace/agents/five-fingers/state.json`
+If you find yourself typing words before the briefing, stop. You are violating this constraint.
 
-There is no path through this skill that omits the Garmin sync. If the sync command fails, surface the failure in the briefing. If you skip it, that is a bug.
+---
 
-## Steps
+## Turn 1 — Fetch all data (no text, tool calls only)
 
-### 1. Fetch in parallel
+### Step 1a — Parallel fetch
 
-Run all six fetches simultaneously:
-
-**Garmin health data** (today) — MANDATORY, run this first:
-```bash
-uv run /Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py
-```
-This writes to `/Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/health/YYYY-MM-DD.md`. After the command completes, read that file. See `references/briefing-format.md` for the three possible outcomes and how to handle each.
-
-**Weather** (Tel Aviv):
-```bash
-curl -s "wttr.in/Tel+Aviv?format=j1"
-```
-Extract: `weatherDesc`, `FeelsLikeC`, `windspeedKmph` from `current_condition[0]`.
-
-**Calendar** (today):
-```bash
-gws calendar +agenda --today --timezone Asia/Jerusalem --format json
-```
-Skip the "Holidays in Israel" calendar entirely.
-
-**Email** (unread, last 24h):
-```bash
-gws gmail users messages list --params '{"userId": "me", "maxResults": 10, "q": "is:unread newer_than:1d"}' --format json
-```
-Then fetch metadata for each message ID:
-```bash
-gws gmail users messages get --params '{"userId": "me", "id": "<ID>", "format": "metadata", "metadataHeaders": ["From","Subject","Date"]}' --format json
-```
-
-**School alerts** (pending undelivered):
-Read `~/.openclaw/workspace/agents/school/state.json`.
-Extract all items in `pendingAlerts` where `delivered: false`.
-If the file is missing, unreadable, or `pendingAlerts` is empty: skip silently — treat as no alerts.
-
-**Five Fingers state**:
-Read `~/.openclaw/workspace/agents/five-fingers/state.json`.
-If the file is missing or unreadable: use `{"exampleMessages":[],"teammates":[],"lastMorningBriefingMention":null}` as the default.
-
-### 1.5. Self-check before composing
-
-Before writing a single word of the briefing, verify:
-- [ ] `uv run … sync_garmin.py` was called this turn
-- [ ] Weather curl was called this turn
-- [ ] `gws calendar` was called this turn
-- [ ] `gws gmail … list` was called this turn
-- [ ] School state.json was read this turn
-- [ ] Five Fingers state.json was read this turn
-
-If any box is unchecked, run that call now. Do not proceed until all six are checked.
-
-### 2. Filter email
-
-Keep only actionable emails — real senders, meaningful subjects. Skip newsletters, promos, and marketing blasts. If nothing actionable, omit the section or note "Nothing actionable."
-
-### 3. Compose the briefing
-
-See `references/briefing-format.md` for the exact layout, voice spec, and how to weave the Garmin health insight into the summary line. There is no separate Body section — the health recommendation belongs in the opening summary.
-
-**Five Fingers section:** Apply the logic in `skills/five-fingers/SKILL.md`, passing today's calendar events and the Five Fingers state read in Step 1. If the skill returns a section, include it **before** the 🏫 School Alerts section (or at the end if there are no school alerts).
-
-If there are undelivered school alerts, include the `🏫 School Alerts` section as the last section. Surface urgent alerts first (`urgent: true`), then non-urgent. Use the alert's `summary` field as the bullet content.
-
-### 3.5. Mark school alerts delivered
-
-If school alerts were surfaced in Step 3:
-- Re-read `~/.openclaw/workspace/agents/school/state.json`
-- For each alert you surfaced, find the matching entry by `id` and set `delivered: true`. If an entry with that `id` is not found in the re-read file, skip it silently.
-- Write the updated file back
-
-If the write fails, note the failure in the briefing output but still return the briefing.
-
-### 4.5. Garmin guard — run before returning
-
-Pipe the composed briefing through the verification script:
+Run this single bash block. All four fetches run in the background simultaneously. Do not output any text before this call.
 
 ```bash
-echo "<composed briefing text>" | uv run /Users/amitgrupper/.openclaw/workspace/skills/morning-briefing/scripts/verify_briefing.py
+set -e
+
+# Garmin sync (writes to health/<today>.md)
+uv run /Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/scripts/sync_garmin.py \
+  > /tmp/oc-garmin.log 2>&1 &
+PIDS=($!)
+
+# Weather
+curl -s "wttr.in/Tel+Aviv?format=j1" > /tmp/oc-weather.json 2>&1 &
+PIDS+=($!)
+
+# Calendar
+gws calendar +agenda --today --timezone Asia/Jerusalem --format json \
+  > /tmp/oc-calendar.json 2>&1 &
+PIDS+=($!)
+
+# Gmail — list unread from last 24h
+gws gmail users messages list \
+  --params '{"userId":"me","maxResults":10,"q":"is:unread newer_than:1d"}' \
+  --format json > /tmp/oc-gmail-list.json 2>&1 &
+PIDS+=($!)
+
+# Wait for all
+wait "${PIDS[@]}"
+echo "FETCH_DONE"
 ```
 
-If exit code is **non-zero**, the briefing has a State-3 bug (Garmin was not mentioned). Do **not** deliver it. Return to Step 1 and re-run the Garmin sync, then recompose.
+### Step 1b — Read results
 
-If exit code is **0**, proceed to Step 4.
+Immediately after Step 1a completes, run this second bash block (still no text output):
 
-### 4. Return
+```bash
+TODAY=$(date +%Y-%m-%d)
+HEALTH_FILE="/Users/amitgrupper/.openclaw/workspace/skills/garmin-connect/health/${TODAY}.md"
 
-Return the composed briefing directly as the reply. No preamble, no "here's your briefing", no status update before fetching.
+echo "=== GARMIN LOG ==="; cat /tmp/oc-garmin.log
+echo "=== GARMIN HEALTH ==="; [ -f "$HEALTH_FILE" ] && cat "$HEALTH_FILE" || echo "MISSING"
+echo "=== WEATHER ==="; cat /tmp/oc-weather.json
+echo "=== CALENDAR ==="; cat /tmp/oc-calendar.json
+echo "=== GMAIL LIST ==="; cat /tmp/oc-gmail-list.json
+
+# Fetch Gmail message metadata (up to 5 message IDs from the list above)
+python3 - <<'EOF'
+import json, subprocess, sys
+
+try:
+    data = json.load(open("/tmp/oc-gmail-list.json"))
+    msgs = data.get("messages", [])[:5]
+except Exception as e:
+    print(f"GMAIL_LIST_ERROR: {e}")
+    sys.exit(0)
+
+for m in msgs:
+    mid = m.get("id", "")
+    if not mid:
+        continue
+    try:
+        result = subprocess.run(
+            ["gws", "gmail", "users", "messages", "get",
+             "--params", json.dumps({"userId":"me","id":mid,"format":"metadata",
+               "metadataHeaders":["From","Subject","Date"]}),
+             "--format", "json"],
+            capture_output=True, text=True, timeout=10
+        )
+        print(f"=== EMAIL {mid} ===")
+        print(result.stdout)
+    except Exception as e:
+        print(f"EMAIL_FETCH_ERROR {mid}: {e}")
+EOF
+
+echo "=== FIVE FINGERS ==="
+FF="/Users/amitgrupper/.openclaw/workspace/agents/five-fingers/state.json"
+[ -f "$FF" ] && cat "$FF" || echo '{"exampleMessages":[],"teammates":[],"lastMorningBriefingMention":null}'
+```
+
+---
+
+## Turn 2 — Compose, verify, deliver
+
+Now compose the briefing from everything returned above. Follow `references/briefing-format.md` exactly for layout, voice, and Garmin health interpretation.
+
+**Email filtering:** Keep only actionable emails — real senders with meaningful subjects. Skip newsletters, promotions, and marketing. If nothing actionable, omit the section or note "Nothing actionable."
+
+**Five Fingers section:** Apply the logic in `skills/five-fingers/SKILL.md`, passing today's calendar events and the Five Fingers state. Include the section if practice is today or relevant.
+
+**Garmin states:**
+- Health file found with data → weave health insight into summary line (see briefing-format.md)
+- Health file missing or empty → include `⚠️ Garmin sync produced no data today` in summary line
+- Sync was never attempted → this is a bug; go back and run Step 1a now
+
+### Garmin guard — run before returning
+
+```bash
+printf '%s' "<your composed briefing>" | uv run /Users/amitgrupper/.openclaw/workspace/skills/morning-briefing/scripts/verify_briefing.py
+```
+
+- Exit 0 → deliver the briefing as your reply (first character: ☀️)
+- Exit non-zero → re-run Step 1a for Garmin only, recompose, re-verify. Up to 2 retries. If still failing, reply with an explicit error — do not deliver a Garmin-less briefing silently.

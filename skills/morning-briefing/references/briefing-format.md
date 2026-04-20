@@ -24,13 +24,6 @@
 ✅ **Today's Tasks**
 
 [Task list or "No tasks flagged for today."]
-
----
-
-🏫 **School Alerts**
-
-- [alert text]
-- [alert text]
 ```
 
 ### Layout rules
@@ -40,8 +33,6 @@
 - No separate Body section — Garmin insight is woven into the summary line
 - Omit **📧 Email Highlights** section if nothing actionable (or write "Nothing actionable.")
 - Omit **✅ Today's Tasks** section if no tasks tool is available
-- Omit **🏫 School Alerts** section entirely if no undelivered alerts — no heading, no content, and no preceding divider
-- Surface urgent alerts first (where `urgent: true`), then non-urgent
 - All-day events and holidays: skip unless genuinely relevant
 
 ---
@@ -78,16 +69,16 @@ Secondary signal: Training Readiness score + Garmin's label.
 ### Examples
 
 **Good readiness, Five Fingers day:**
-> "Good morning, sir. Clear and mild out — you're well rested heading into practice tonight."
+> "Good morning, sir. 14°C now, clearing to 22°C and sunny by afternoon — you're well rested heading into practice tonight."
 
 **Poor sleep, gym day:**
-> "Good morning, sir. Overcast with a light wind — sleep was rough last night, might be worth dialing back the intensity at the gym."
+> "Good morning, sir. 17°C with overcast skies most of the day, light wind in the afternoon — sleep was rough last night, might be worth dialing back the intensity at the gym."
 
-**Low HRV, busy school day + practice:**
-> "Good morning, sir. Warm and sunny — HRV is a bit down from your usual, so going easy at practice tonight wouldn't be the worst idea."
+**Low HRV, busy day + practice:**
+> "Good morning, sir. 16°C now, peaking at 24°C mid-afternoon with light cloud — HRV is a bit down from your usual, so going easy at practice tonight wouldn't be the worst idea."
 
 **Everything fine, no training:**
-> "Good morning, sir. Warm and clear — you're well recovered, and it's a light day."
+> "Good morning, sir. 19°C now, peaking at 27°C with clear skies all day — you're well recovered, and it's a light day."
 
 **State 1 — Sync ran AND today's health file exists with data:** weave a health insight into the summary line (see examples above).
 **State 2 — Sync ran AND today's file is missing or empty:** include `⚠️ Garmin sync produced no data today` in the summary line. Do NOT silently skip.
@@ -104,16 +95,16 @@ One line. Greeting + day's shape. No enumeration of the schedule — the calenda
 - 12pm–5pm → "Afternoon, sir."
 - After 5pm → "Evening, sir."
 
-**Weather:** weave in as a natural aside — sky + feel + wind if notable. Never use numbers or units (no °C, no km/h, no percentages).
+**Weather:** give a real forecast reading that spans the day. Use the morning/afternoon/evening buckets from the weather subagent return. Include actual temperatures and conditions — e.g., "18°C crisp start, climbing to 26°C and sunny by afternoon, light wind picking up around sunset, no rain." Cover the whole day, not just this moment. Do not use vague vibes-only language ("warm and clear") when you have real forecast numbers.
 
 **Day shape:** abstract groupings, not a list. "a few meetings and practice tonight" not "9am meeting, 10am meeting, 5pm practice."
 
 **Approved examples:**
-> "Good morning, sir. Sunny and warm out with a light breeze — school in the morning and a clean afternoon after."
+> "Good morning, sir. 15°C now, climbing to 25°C and mostly sunny by afternoon, light wind — a few meetings this morning and a clean run into the evening."
 
-> "Afternoon, sir. Warm and clear outside — school's already wrapped, rest of the day is yours."
+> "Afternoon, sir. 22°C and clear with some cloud building toward sunset — meetings are done, rest of the day is yours."
 
-> "Good morning, sir. Nothing out of the ordinary today — a few things to get through and practice tonight."
+> "Good morning, sir. 18°C now, 26°C peak around 2pm, dry all day — nothing out of the ordinary today, practice tonight."
 
 **Anti-examples (never do this):**
 - "You have a structured day ahead with a productive mix of..." — corporate filler
