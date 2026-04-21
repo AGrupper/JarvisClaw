@@ -45,6 +45,11 @@ gws gmail users messages list \
   --format json > /tmp/oc-gmail-list.json 2>&1 &
 PIDS+=($!)
 
+# Things3 — today + overdue + due-today, grouped by area
+bash /Users/amitgrupper/.openclaw/workspace/skills/things3/briefing_tasks.sh \
+  > /tmp/oc-things.json 2>/tmp/oc-things.log &
+PIDS+=($!)
+
 # Wait for all
 wait "${PIDS[@]}"
 echo "FETCH_DONE"
@@ -92,6 +97,8 @@ for m in msgs:
     except Exception as e:
         print(f"EMAIL_FETCH_ERROR {mid}: {e}")
 EOF
+
+echo "=== THINGS3 TASKS ==="; cat /tmp/oc-things.json 2>/dev/null || echo "MISSING"
 
 echo "=== FIVE FINGERS ==="
 FF="/Users/amitgrupper/.openclaw/workspace/agents/five-fingers/state.json"

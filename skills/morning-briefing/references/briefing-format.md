@@ -23,7 +23,14 @@
 
 ✅ **Today's Tasks**
 
-[Task list or "No tasks flagged for today."]
+**Overdue** *(if any)*
+- [!] Title (due YYYY-MM-DD, Area)
+
+**Area Name**
+- Title
+
+**Due today** *(not in Today list, if any)*
+- Title (Area)
 ```
 
 ### Layout rules
@@ -32,7 +39,11 @@
 - No trailing divider after the last section
 - No separate Body section — Garmin insight is woven into the summary line
 - Omit **📧 Email Highlights** section if nothing actionable (or write "Nothing actionable.")
-- Omit **✅ Today's Tasks** section if no tasks tool is available
+- Omit **✅ Today's Tasks** section entirely if all three buckets are empty
+- Omit any sub-heading (Overdue / Area / Due today) whose bucket is empty
+- Tasks with no area go under **Other**
+- Cap at ~8 tasks total; if more, add a `+N more` footer line
+- One line per task; no inline tags unless a deadline is present
 - All-day events and holidays: skip unless genuinely relevant
 
 ---
