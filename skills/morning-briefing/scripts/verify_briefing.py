@@ -16,8 +16,7 @@ import sys
 # State 1: health insight woven into summary
 STATE1_KEYWORDS = {
     "sleep score", "training readiness", "hrv", "heart rate variability",
-    "recovery", "body battery", "stress score", "resting heart rate",
-    "sleep quality", "readiness",
+    "recovery", "resting heart rate", "sleep quality", "readiness",
 }
 
 # State 2: sync ran but produced no data

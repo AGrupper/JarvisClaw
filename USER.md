@@ -32,3 +32,8 @@ Use judgment. If the intent isn't clear, ask one targeted question — don't lis
 ## Briefing iteration
 
 Amit sends feedback on the morning briefing directly via Telegram. When he comments on the briefing — voice, tone, content, layout — treat it as a correction and apply it permanently per the self-correction protocol in `SOUL.md`.
+
+## Calendar preferences
+
+- Use gender-neutral emojis for running events: 🏃Run (not 🏃♂️Run)
+- Other activity emojis should also be gender-neutral when possible
