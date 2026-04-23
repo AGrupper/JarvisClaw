@@ -1,6 +1,6 @@
 ---
 name: morning-briefing
-description: "Fetch and deliver Amit's daily briefing: weather (Tel Aviv), Google Calendar events for today, and unread Gmail highlights. Use when Amit asks for his briefing, morning briefing, or daily summary. Composes and returns the briefing directly — no status updates mid-way."
+description: "Fetch and deliver Amit's daily briefing: weather (Tel Aviv), Google Calendar events for today, unread Gmail highlights, today's Readwise email, Things3 tasks, Garmin health, and Five Fingers state. Use when Amit asks for his briefing, morning briefing, or daily summary. Composes and returns the briefing directly with no status updates or process narration unless user help is required."
 ---
 
 # Morning Briefing
@@ -14,13 +14,23 @@ description: "Fetch and deliver Amit's daily briefing: weather (Tel Aviv), Googl
 
 If you find yourself typing words before the briefing, stop. You are violating this constraint.
 
+If a dependency fails but can be repaired locally, repair it first and continue. Only surface an issue to Amit when his input or credentials are actually required.
+
+---
+
+## Model Routing
+
+The main agent composes the final briefing. If future versions introduce LLM subagents for email filtering, Readwise extraction, Five Fingers classification, or any other fetch/classification work, those workers must use `minimax/MiniMax-M2.7` with `anthropic/claude-haiku-4-5` as fallback.
+
+Do not replace deterministic script/API fetches with LLM subagents. Garmin, weather, calendar, Gmail, Things3, and Readwise fetches should stay in the parallel bash pipeline unless a source genuinely needs model judgment. Worker subagents return raw or structured data only; the main agent writes the final user-facing briefing.
+
 ---
 
 ## Turn 1 — Fetch all data (no text, tool calls only)
 
 ### Step 1a — Parallel fetch
 
-Run this single bash block. All four fetches run in the background simultaneously. Do not output any text before this call.
+Run this single bash block. All fetches run in the background simultaneously. Do not output any text before this call.
 
 ```bash
 set -e
@@ -43,6 +53,11 @@ PIDS+=($!)
 gws gmail users messages list \
   --params '{"userId":"me","maxResults":10,"q":"is:unread newer_than:1d"}' \
   --format json > /tmp/oc-gmail-list.json 2>&1 &
+PIDS+=($!)
+
+# Readwise — today's daily email only
+python3 /Users/amitgrupper/.openclaw/workspace/skills/morning-briefing/scripts/fetch_readwise_digest.py \
+  > /tmp/oc-readwise.json 2>/tmp/oc-readwise.log &
 PIDS+=($!)
 
 # Things3 — today + overdue + due-today, grouped by area
@@ -68,6 +83,8 @@ echo "=== GARMIN HEALTH ==="; [ -f "$HEALTH_FILE" ] && cat "$HEALTH_FILE" || ech
 echo "=== WEATHER ==="; cat /tmp/oc-weather.json
 echo "=== CALENDAR ==="; cat /tmp/oc-calendar.json
 echo "=== GMAIL LIST ==="; cat /tmp/oc-gmail-list.json
+echo "=== READWISE DIGEST ==="; cat /tmp/oc-readwise.json 2>/dev/null || echo '{"found":false,"error":"readwise fetch output missing"}'
+echo "=== READWISE LOG ==="; cat /tmp/oc-readwise.log 2>/dev/null || true
 
 # Fetch Gmail message metadata (up to 5 message IDs from the list above)
 python3 - <<'EOF'
@@ -112,6 +129,8 @@ FF="/Users/amitgrupper/.openclaw/workspace/agents/five-fingers/state.json"
 Now compose the briefing from everything returned above. Follow `references/briefing-format.md` exactly for layout, voice, and Garmin health interpretation.
 
 **Email filtering:** Keep only actionable emails — real senders with meaningful subjects. Skip newsletters, promotions, and marketing. If nothing actionable, omit the section or note "Nothing actionable."
+
+**Readwise section:** Always include `📚 **Readwise**`. Use `=== READWISE DIGEST ===`, which contains today's Readwise email only. Include the full daily Readwise content: all highlight snippets from the email, preserving book/source attribution when present. Do not summarize down to 1-3 bullets, do not omit highlights, and do not look beyond today's email. If `found` is false or the body is empty, include `⚠️ Today's Readwise email was not found.` in the Readwise section.
 
 **Five Fingers section:** Apply the logic in `skills/five-fingers/SKILL.md`, passing today's calendar events and the Five Fingers state. Include the section if practice is today or relevant.
 
