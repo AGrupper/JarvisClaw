@@ -2,3 +2,5 @@ node_modules/
 agents/school/cookies.json
 .clawhub/
 .openclaw/
+download.html
+scripts/auto_refresh_gws_token.sh

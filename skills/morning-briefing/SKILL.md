@@ -20,7 +20,7 @@ If a dependency fails but can be repaired locally, repair it first and continue.
 
 ## Model Routing
 
-The main agent composes the final briefing. If future versions introduce LLM subagents for email filtering, Readwise extraction, Five Fingers classification, or any other fetch/classification work, those workers must use `minimax/MiniMax-M2.7` with `anthropic/claude-haiku-4-5` as fallback.
+The main agent (`openai-codex/gpt-5.4`) composes the final briefing. If future versions introduce LLM subagents for email filtering, Readwise extraction, Five Fingers classification, or any other fetch/classification work, those workers must use `minimax/MiniMax-M2.7` with `anthropic/claude-haiku-4-5` as fallback.
 
 Do not replace deterministic script/API fetches with LLM subagents. Garmin, weather, calendar, Gmail, Things3, and Readwise fetches should stay in the parallel bash pipeline unless a source genuinely needs model judgment. Worker subagents return raw or structured data only; the main agent writes the final user-facing briefing.
 

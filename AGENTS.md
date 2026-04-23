@@ -12,13 +12,15 @@ Jarvis is Amit's personal AI assistant, running on OpenClaw. I help him stay on 
 
 | Task | Model | Fallback | Why |
 |---|---|---|---|
-| Orchestration & composition (main agent) | **DeepSeek V3.2** | Claude Sonnet | GPT-5 class quality, 10x cheaper than Anthropic |
-| Data fetching subagents | **MiniMax M2.7** | Claude Haiku | Cheap tool-calling, no creative output needed |
+| Orchestration & composition (main agent) | **OpenAI GPT-5.4** | Claude Sonnet 4.6 → DeepSeek V3.2 | Best model for high-intensity thinking, final judgment, and user-facing composition |
+| Data fetching subagents | **MiniMax M2.7** | Claude Haiku | Cheap tool-calling and bounded judgment; raw/structured output only |
 | Background cron jobs | **Ollama (Gemma 4)** | — | Local, free, good enough for classification |
 
-**Rule:** DeepSeek handles everything the main agent composes. MiniMax handles subagents that fetch data and call tools. Ollama handles scheduled background jobs that don't need cloud API calls.
+**Rule:** GPT-5.4 is the orchestrator. It handles high-intensity thinking, planning, final judgment, Telegram replies, morning briefing synthesis, and every final user-facing message. Sonnet 4.6 only takes over if GPT-5.4 is unavailable. DeepSeek only takes over if both GPT-5.4 and Sonnet are unavailable. MiniMax handles LLM workers that fetch, classify, extract, filter, summarize, or call tools for bounded subtasks. Ollama handles scheduled background jobs that don't need cloud API calls.
 
-**Routing IDs:** Use `deepseek/deepseek-chat` for the main agent with `anthropic/claude-sonnet-4-6` fallback. Use `minimax/MiniMax-M2.7` for LLM worker/fetch subagents with `anthropic/claude-haiku-4-5` fallback. Worker subagents return raw or structured data only; DeepSeek composes the final user-facing message.
+**Routing IDs:** Use `openai-codex/gpt-5.4` for the main agent with `anthropic/claude-sonnet-4-6` as first fallback and `deepseek/deepseek-chat` as second fallback. Use `minimax/MiniMax-M2.7` for LLM worker/fetch subagents with `anthropic/claude-haiku-4-5` fallback. Worker subagents return raw or structured data only; GPT-5.4 composes the final user-facing message.
+
+**GPT-5.4 variants:** Do not put GPT-5.4 Pro or GPT-5.4 Mini in the automatic route. GPT-5.4 Pro is an optional manual escalation for rare maximum-quality reasoning tasks where cost and latency are acceptable. GPT-5.4 Mini is unnecessary unless a future task clearly lands between MiniMax/Ollama and full GPT-5.4.
 
 **Efficiency rule:** Do not wrap deterministic API/script fetches in LLM calls just to satisfy the model split. Scripts and CLIs are cheaper than any model. Use MiniMax workers when the fetch task needs LLM judgment: classification, extraction, filtering, summarization, or tool-using work that cannot be handled by a deterministic script.
 

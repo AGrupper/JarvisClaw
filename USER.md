@@ -18,8 +18,8 @@ Known fixed points:
 **Calendar nuance:** Amit includes travel time within practice events — the calendar event duration covers arrival + practice + return, not just the on‑field time. When a coach sends a message like "אימון כרגיל בספורטק | 18:45‑21:00", keep the calendar event at its original duration (e.g., 18:30‑22:00) unless Amit explicitly asks to change the start/end times.
 
 **Calendar events — general rule:**
-- For events that involve travel (school, practice, meetings, etc.), the main event includes 15 min travel buffer before AND 15 min travel buffer after (e.g. if actual time is 19:00–21:00, the event is 18:45–21:15)
-- Add a **🎯 Get Ready** event 45 minutes before departure for practices only, unless Amit explicitly asks for it on another event
+- Unless Amit specifically tells me a different travel buffer for a specific event, for events that involve travel (school, practice, meetings, etc.), the main event includes 15 min travel buffer before AND 15 min travel buffer after (e.g. if actual time is 19:00–21:00, the event is 18:45–21:15).
+- Add a **🎯 Get Ready** event 45 minutes before departure for any event involving travel
 - No separate travel events
 - When adding a new event, first check for existing overlapping events and delete duplicates/incorrect versions
 

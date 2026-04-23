@@ -21,6 +21,12 @@
 
 ---
 
+📚 **Readwise**
+
+[Today's full Readwise email content: all 5 highlight snippets, preserving source/book attribution when present]
+
+---
+
 ✅ **Today's Tasks**
 
 **Overdue** *(if any)*
@@ -39,6 +45,8 @@
 - No trailing divider after the last section
 - No separate Body section — Garmin insight is woven into the summary line
 - Omit **📧 Email Highlights** section if nothing actionable (or write "Nothing actionable.")
+- Always include **📚 Readwise**; if today's email is missing, write `⚠️ Today's Readwise email was not found.`
+- Readwise must include every highlight snippet from today's email. Do not summarize to a fixed bullet count.
 - Omit **✅ Today's Tasks** section entirely if all three buckets are empty
 - Omit any sub-heading (Overdue / Area / Due today) whose bucket is empty
 - Tasks with no area go under **Other**
